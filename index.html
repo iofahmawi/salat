@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مواقيت الصلاة - عمّان</title>
     
-     <!-- === الإضافات الجديدة لـ PWA === -->
+    <!-- === الإضافات الجديدة لـ PWA === -->
     <meta name="theme-color" content="#0D1B2A">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icon-1024.png">
@@ -29,10 +29,12 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 15px;
-            padding-top: 25px; 
+            /* تعديل: تم إزالة التوسيط العمودي وإرجاع padding علوي */
+            padding: 25px 15px 15px 15px;
             box-sizing: border-box;
             min-height: 100vh;
+            display: flex;
+            justify-content: center; /* للتوسيط الأفقي فقط */
         }
         .container {
             width: 100%;
@@ -42,7 +44,7 @@
         header h1 {
             font-size: 1.8rem;
             margin-bottom: 5px;
-            line-height: 1.7; /* تم زيادة القيمة هنا لزيادة المسافة بين السطرين */
+            line-height: 1.7; 
         }
         #current-date-header {
             color: var(--primary-color);
@@ -69,7 +71,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 4.5rem;
+            margin-top: 4.5rem; 
         }
         .nav-arrow {
             background: var(--card-color);
@@ -238,7 +240,9 @@
                 });
 
                 const isToday = (new Date()).toDateString() === date.toDateString();
-                elements.countdownContainer.style.display = isToday ? 'block' : 'none';
+                
+                elements.countdownContainer.style.visibility = isToday ? 'visible' : 'hidden';
+
                 document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('active'));
 
                 if (isToday) {
