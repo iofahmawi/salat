@@ -1,0 +1,16 @@
+{
+  "name": "مواقيت الصلاة",
+  "short_name": "مواقيت الصلاة",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0D1B2A",
+  "theme_color": "#0D1B2A",
+  "description": "تطبيق بسيط لعرض مواقيت الصلاة لمدينة عمّان.",
+  "icons": [
+    {
+      "src": "icon-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ]
+}
