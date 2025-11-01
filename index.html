@@ -33,7 +33,9 @@
             box-sizing: border-box;
             min-height: 100vh;
             display: flex;
-            justify-content: center; 
+            justify-content: center;
+            /* تعديل: هذا السطر يثبت موضع المحتوى عمودياً ويمنع "القفزة" عند التحديث */
+            align-items: flex-start;
         }
         .container {
             width: 100%;
@@ -173,7 +175,7 @@
                 
                 let [hour, minute] = timeStr.split(':');
                 let h = parseInt(hour, 10);
-                if (!isAm && h > 12) h -= 12; // Handle potential 24h format if needed
+                if (!isAm && h > 12) h -= 12; 
                 if (h === 0) h = 12;
 
                 return `${h}:${minute} ${ampm}`;
@@ -217,10 +219,9 @@
                 elements.nextDayBtn.disabled = currentDay >= lastDate;
             }
 
-            // --- تعديل: تم تحديث دالة العد التنازلي بالكامل لتطبيق المنطق الجديد للتظليل ---
             function startCountdown() {
                 const now = new Date();
-                const gracePeriod = 30 * 60 * 1000; // 30 دقيقة بالمللي ثانية
+                const gracePeriod = 30 * 60 * 1000;
                 const dateKey = getDateString(now);
                 const dayData = prayerData.get(dateKey);
                 if (!dayData) return;
@@ -230,7 +231,6 @@
                     if (!time) return null;
                     const [h, m] = time.split(':');
                     
-                    // تحويل جميع الأوقات إلى نظام 24 ساعة للمقارنة الصحيحة
                     let hour24 = parseInt(h, 10);
                     const isAm = name === 'FAJR' || name === 'SUNRISE';
                     if (!isAm && hour24 < 12) {
@@ -250,23 +250,17 @@
                     }
                 }
 
-                // --- منطق التظليل الجديد ---
                 let prayerToHighlight = null;
                 if (!currentPrayer && nextPrayer) {
-                    // الحالة 1: قبل الفجر, نظلل الصلاة القادمة (الفجر)
                     prayerToHighlight = nextPrayer;
                 } else if (currentPrayer && nextPrayer) {
-                    // الحالة 2: بين صلاتين
                     const timeSinceCurrentPrayer = now - currentPrayer.date;
                     if (timeSinceCurrentPrayer < gracePeriod) {
-                        // نحن في فترة السماح (30 دقيقة), نظلل الصلاة الحالية
                         prayerToHighlight = currentPrayer;
                     } else {
-                        // بعد فترة السماح, نظلل الصلاة القادمة
                         prayerToHighlight = nextPrayer;
                     }
                 } else if (currentPrayer && !nextPrayer) {
-                    // الحالة 3: بعد صلاة العشاء, نظلل العشاء
                     prayerToHighlight = currentPrayer;
                 }
 
@@ -274,10 +268,7 @@
                 if (prayerToHighlight && prayerToHighlight.card) {
                     prayerToHighlight.card.classList.add('active');
                 }
-                // --- نهاية منطق التظليل ---
 
-
-                // منطق عرض العد التنازلي (يبقى كما هو)
                 if (nextPrayer) {
                     elements.nextPrayerName.textContent = `متبقي على أذان ${nextPrayer.nameAr}`;
                     elements.timer.textContent = getCountdownString(nextPrayer.date - now);
