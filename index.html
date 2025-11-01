@@ -24,7 +24,6 @@
             --primary-color: #E1C56E;
             --disabled-color: #4A5568;
         }
-        /* --- تعديل هيكلي: ضمان ثبات الصفحة ومنع التمرير --- */
         html, body {
             height: 100%;
             margin: 0;
@@ -39,7 +38,6 @@
             display: flex;
             justify-content: center;
         }
-        /* --- تعديل هيكلي: تحويل الحاوية إلى flex column لتوزيع المساحة --- */
         .container {
             width: 100%;
             max-width: 800px;
@@ -47,11 +45,12 @@
             text-align: center;
             display: flex;
             flex-direction: column;
-            padding-top: 7.5px; /* إعادة المسافة العلوية للعنوان */
+            padding-top: 7.5px; /* تم تعديل المسافة العلوية بناءً على طلبك */
+            padding-bottom: 20px; /* تعديل: تمت إضافة هذا السطر لرفع الأسهم */
             box-sizing: border-box;
         }
         header {
-            flex-shrink: 0; /* منع انكماش الهيدر */
+            flex-shrink: 0;
         }
         header h1 {
             font-size: 1.8rem;
@@ -61,14 +60,14 @@
         #current-date-header {
             color: var(--primary-color);
             font-size: 1rem;
-            margin: 0 0 1.5rem 0; /* المسافة بين التاريخ والمواقيت */
+            margin: 0 0 1.5rem 0;
             min-height: 1.2em;
         }
         .prayer-times-grid { 
             display: grid; 
             grid-template-columns: repeat(3, 1fr); 
             gap: 10px; 
-            flex-shrink: 0; /* منع انكماش المواقيت */
+            flex-shrink: 0;
         }
         .prayer-card {
             background-color: var(--card-color);
@@ -85,18 +84,17 @@
             border-radius: 8px; 
             padding: 15px; 
             margin-top: 1.5rem; 
-            flex-shrink: 0; /* منع انكماش العداد */
+            flex-shrink: 0;
         }
         #next-prayer-name { color: var(--primary-color); font-size: 1.1rem; font-weight: 600; }
         #timer { margin: 0; font-size: 1.9rem; font-weight: bold; }
         
-        /* --- تعديل هيكلي: تثبيت الأسهم في الأسفل --- */
         .navigation-controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: auto; /* السحر كله هنا: يدفع العنصر لأسفل */
-            padding-top: 1.5rem; /* مسافة بسيطة من المحتوى الذي قد يقترب منه */
+            margin-top: auto;
+            padding-top: 1.5rem;
         }
         .nav-arrow {
             background: var(--card-color);
@@ -121,7 +119,6 @@
 </head>
 <body>
 
-    <!-- تعديل هيكلي: تم تبسيط الهيكل بإزالة وسم main -->
     <div class="container">
         <header>
             <h1>مواقيت الصلاة لمدينة<br>عمّان</h1>
@@ -149,7 +146,6 @@
     </div>
 
     <script>
-    // --- قسم الجافاسكريبت لم يتغير ---
     document.addEventListener('DOMContentLoaded', async () => {
         async function fetchAndParsePrayerData() {
             const url = 'https://iofahmawi.github.io/salat/amman-2025.csv';
