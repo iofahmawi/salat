@@ -70,7 +70,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 4rem; /* تعديل: تم تغيير القيمة بناءً على طلبك */
+            margin-top: 4rem;
         }
         .nav-arrow {
             background: var(--card-color);
@@ -121,18 +121,13 @@
     </div>
 
     <script>
-        // تعديل: تم حذف البيانات الثابتة من هنا
-
         document.addEventListener('DOMContentLoaded', async () => {
             
-            // --- تعديل: دالة جديدة لجلب وتحليل بيانات الصلاة من الرابط ---
             async function fetchAndParsePrayerData() {
                 const url = 'https://iofahmawi.github.io/salat/amman-2025.csv';
                 try {
                     const response = await fetch(url);
-                    if (!response.ok) {
-                        throw new Error('فشل استجابة الشبكة');
-                    }
+                    if (!response.ok) throw new Error('Network response was not ok');
                     const csvText = await response.text();
                     return new Map(
                         csvText.trim().split('\n').slice(1).map(line => {
@@ -141,16 +136,14 @@
                         })
                     );
                 } catch (error) {
-                    console.error("خطأ في تحميل مواقيت الصلاة:", error);
+                    console.error("Error fetching prayer times:", error);
                     document.getElementById('current-date-header').textContent = 'فشل تحميل المواقيت. يرجى التحقق من اتصال الإنترنت.';
                     return null;
                 }
             }
 
             const prayerData = await fetchAndParsePrayerData();
-            if (!prayerData) return; // إيقاف التنفيذ إذا فشل تحميل البيانات
-
-            // -----------------------------------------------------------------
+            if (!prayerData) return;
 
             const prayerNames = { FAJR: 'الفجر', SUNRISE: 'الشروق', DHUHR: 'الظهر', ASR: 'العصر', MAGHRIB: 'المغرب', ISHA: 'العشاء' };
             const elements = {
@@ -173,12 +166,17 @@
                 return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
             }
 
-            // --- تعديل: تم إصلاح دالة التوقيت بالكامل ---
             function formatTimeForDisplay(timeStr, prayerKey) {
                 if (!timeStr) return '--:--';
                 const isAm = prayerKey === 'FAJR' || prayerKey === 'SUNRISE';
                 const ampm = isAm ? 'ص' : 'م';
-                return `${timeStr} ${ampm}`;
+                
+                let [hour, minute] = timeStr.split(':');
+                let h = parseInt(hour, 10);
+                if (!isAm && h > 12) h -= 12; // Handle potential 24h format if needed
+                if (h === 0) h = 12;
+
+                return `${h}:${minute} ${ampm}`;
             }
 
             function updateUIForDate(date) {
@@ -191,7 +189,6 @@
                 Object.keys(prayerNames).forEach(key => {
                     const element = elements[`${key.toLowerCase()}Time`];
                     if (element) {
-                        // تمرير اسم الصلاة (key) للدالة الجديدة
                         element.textContent = dayData ? formatTimeForDisplay(dayData[key], key) : '--:--';
                     }
                 });
@@ -216,13 +213,14 @@
                 const lastDate = new Date(dateArray[dateArray.length - 1]); lastDate.setHours(0, 0, 0, 0);
                 const currentDay = new Date(date); currentDay.setHours(0, 0, 0, 0);
                 
-                // تعديل بسيط: زر السابق يعتمد على أول يوم في البيانات بدلاً من اليوم الحالي
                 elements.prevDayBtn.disabled = currentDay <= firstDate;
                 elements.nextDayBtn.disabled = currentDay >= lastDate;
             }
 
+            // --- تعديل: تم تحديث دالة العد التنازلي بالكامل لتطبيق المنطق الجديد للتظليل ---
             function startCountdown() {
                 const now = new Date();
+                const gracePeriod = 30 * 60 * 1000; // 30 دقيقة بالمللي ثانية
                 const dateKey = getDateString(now);
                 const dayData = prayerData.get(dateKey);
                 if (!dayData) return;
@@ -231,10 +229,11 @@
                     const time = dayData[name];
                     if (!time) return null;
                     const [h, m] = time.split(':');
+                    
+                    // تحويل جميع الأوقات إلى نظام 24 ساعة للمقارنة الصحيحة
                     let hour24 = parseInt(h, 10);
-
-                    // تحويل ساعات المساء إلى توقيت 24 ساعة للعد التنازلي
-                    if (name !== 'FAJR' && name !== 'SUNRISE' && hour24 < 12) {
+                    const isAm = name === 'FAJR' || name === 'SUNRISE';
+                    if (!isAm && hour24 < 12) {
                         hour24 += 12;
                     }
                     
@@ -243,13 +242,42 @@
 
                 let currentPrayer = null, nextPrayer = null;
                 for (const prayer of prayerTimesToday) {
-                    if (now >= prayer.date) currentPrayer = prayer;
-                    if (now < prayer.date && !nextPrayer) nextPrayer = prayer;
+                    if (now >= prayer.date) {
+                        currentPrayer = prayer;
+                    }
+                    if (now < prayer.date && !nextPrayer) {
+                        nextPrayer = prayer;
+                    }
+                }
+
+                // --- منطق التظليل الجديد ---
+                let prayerToHighlight = null;
+                if (!currentPrayer && nextPrayer) {
+                    // الحالة 1: قبل الفجر, نظلل الصلاة القادمة (الفجر)
+                    prayerToHighlight = nextPrayer;
+                } else if (currentPrayer && nextPrayer) {
+                    // الحالة 2: بين صلاتين
+                    const timeSinceCurrentPrayer = now - currentPrayer.date;
+                    if (timeSinceCurrentPrayer < gracePeriod) {
+                        // نحن في فترة السماح (30 دقيقة), نظلل الصلاة الحالية
+                        prayerToHighlight = currentPrayer;
+                    } else {
+                        // بعد فترة السماح, نظلل الصلاة القادمة
+                        prayerToHighlight = nextPrayer;
+                    }
+                } else if (currentPrayer && !nextPrayer) {
+                    // الحالة 3: بعد صلاة العشاء, نظلل العشاء
+                    prayerToHighlight = currentPrayer;
                 }
 
                 document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('active'));
-                if (currentPrayer) currentPrayer.card.classList.add('active');
+                if (prayerToHighlight && prayerToHighlight.card) {
+                    prayerToHighlight.card.classList.add('active');
+                }
+                // --- نهاية منطق التظليل ---
 
+
+                // منطق عرض العد التنازلي (يبقى كما هو)
                 if (nextPrayer) {
                     elements.nextPrayerName.textContent = `متبقي على أذان ${nextPrayer.nameAr}`;
                     elements.timer.textContent = getCountdownString(nextPrayer.date - now);
