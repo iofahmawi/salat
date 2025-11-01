@@ -13,7 +13,7 @@
     <!-- ============================= -->
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -24,34 +24,53 @@
             --primary-color: #E1C56E;
             --disabled-color: #4A5568;
         }
+        /* --- تعديل جذري: التحكم الدقيق بارتفاع الصفحة ومنع التمرير --- */
+        html, body {
+            height: 100%;
+            margin: 0;
+            overflow: hidden; /* منع أي تمرير على مستوى الصفحة */
+        }
         body {
             font-family: 'Cairo', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            margin: 0;
-            padding: 25px 15px 15px 15px;
+            padding: 15px; /* مسافة آمنة حول الحاوية */
             box-sizing: border-box;
-            min-height: 100vh;
             display: flex;
             justify-content: center;
-            /* تعديل: هذا السطر يثبت موضع المحتوى عمودياً ويمنع "القفزة" عند التحديث */
-            align-items: flex-start;
+            align-items: center;
         }
+        /* --- تعديل جذري: تحويل الحاوية إلى flex column لتوزيع المساحة --- */
         .container {
             width: 100%;
             max-width: 800px;
+            height: 100%;
             text-align: center;
+            display: flex;
+            flex-direction: column; /* ترتيب العناصر بشكل عمودي */
+        }
+        header {
+             flex-shrink: 0; /* منع العنوان من الانكماش */
         }
         header h1 {
             font-size: 1.8rem;
+            margin: 0; /* تم إزالة الهوامش السابقة */
             margin-bottom: 5px;
-            line-height: 1.7; 
+            line-height: 1.6;
         }
         #current-date-header {
             color: var(--primary-color);
             font-size: 1rem;
             margin: 0 0 1.5rem 0;
             min-height: 1.2em;
+        }
+        /* --- تعديل جذري: جعل المنطقة الرئيسية تتمدد لملء الفراغ --- */
+        main {
+            flex-grow: 1; /* هذا هو السطر الأهم: يجعل main تتمدد */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* توسيط محتوى main عمودياً في المساحة المتاحة */
+            min-height: 0; /* إصلاح لبعض المتصفحات مع flexbox */
         }
         .prayer-times-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .prayer-card {
@@ -68,11 +87,13 @@
         #next-prayer-name { color: var(--primary-color); font-size: 1.1rem; font-weight: 600; }
         #timer { margin: 0; font-size: 1.9rem; font-weight: bold; }
         
+        /* --- تعديل جذري: إزالة margin-top والاعتماد على flexbox --- */
         .navigation-controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 4rem;
+            margin-top: 1.5rem; /* مسافة بسيطة من المحتوى الذي فوقه */
+            flex-shrink: 0; /* منع الأسهم من الانكماش */
         }
         .nav-arrow {
             background: var(--card-color);
@@ -103,203 +124,202 @@
             <p id="current-date-header">... يتم الآن تحميل المواقيت</p>
         </header>
         <main>
-            <div class="prayer-times-grid">
-                <div class="prayer-card" id="fajr-card"><h2>الفجر</h2><p id="fajr-time">--:--</p></div>
-                <div class="prayer-card" id="sunrise-card"><h2>الشروق</h2><p id="sunrise-time">--:--</p></div>
-                <div class="prayer-card" id="dhuhr-card"><h2>الظهر</h2><p id="dhuhr-time">--:--</p></div>
-                <div class="prayer-card" id="asr-card"><h2>العصر</h2><p id="asr-time">--:--</p></div>
-                <div class="prayer-card" id="maghrib-card"><h2>المغرب</h2><p id="maghrib-time">--:--</p></div>
-                <div class="prayer-card" id="isha-card"><h2>العشاء</h2><p id="isha-time">--:--</p></div>
-            </div>
-            <div class="next-prayer-container" id="countdown-container">
-                <span id="next-prayer-name"></span>
-                <p id="timer"></p>
-            </div>
-            <div class="navigation-controls">
-                <button id="prev-day-btn" class="nav-arrow" aria-label="اليوم السابق">&lt;</button>
-                <button id="next-day-btn" class="nav-arrow" aria-label="اليوم التالي">&gt;</button>
+            <div> <!-- إضافة حاوية لتساعد في التوسيط داخل main -->
+                <div class="prayer-times-grid">
+                    <div class="prayer-card" id="fajr-card"><h2>الفجر</h2><p id="fajr-time">--:--</p></div>
+                    <div class="prayer-card" id="sunrise-card"><h2>الشروق</h2><p id="sunrise-time">--:--</p></div>
+                    <div class="prayer-card" id="dhuhr-card"><h2>الظهر</h2><p id="dhuhr-time">--:--</p></div>
+                    <div class="prayer-card" id="asr-card"><h2>العصر</h2><p id="asr-time">--:--</p></div>
+                    <div class="prayer-card" id="maghrib-card"><h2>المغرب</h2><p id="maghrib-time">--:--</p></div>
+                    <div class="prayer-card" id="isha-card"><h2>العشاء</h2><p id="isha-time">--:--</p></div>
+                </div>
+                <div class="next-prayer-container" id="countdown-container">
+                    <span id="next-prayer-name"></span>
+                    <p id="timer"></p>
+                </div>
             </div>
         </main>
+        <div class="navigation-controls">
+            <button id="prev-day-btn" class="nav-arrow" aria-label="اليوم السابق">&lt;</button>
+            <button id="next-day-btn" class="nav-arrow" aria-label="اليوم التالي">&gt;</button>
+        </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
+    // --- قسم الجافاسكريبت لم يتغير ---
+    document.addEventListener('DOMContentLoaded', async () => {
+        async function fetchAndParsePrayerData() {
+            const url = 'https://iofahmawi.github.io/salat/amman-2025.csv';
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const csvText = await response.text();
+                return new Map(
+                    csvText.trim().split('\n').slice(1).map(line => {
+                        const [date, fajr, sunrise, dhuhr, asr, maghrib, isha] = line.split(',');
+                        return [date, { FAJR: fajr, SUNRISE: sunrise, DHUHR: dhuhr, ASR: asr, MAGHRIB: maghrib, ISHA: isha }];
+                    })
+                );
+            } catch (error) {
+                console.error("Error fetching prayer times:", error);
+                document.getElementById('current-date-header').textContent = 'فشل تحميل المواقيت. يرجى التحقق من اتصال الإنترنت.';
+                return null;
+            }
+        }
+
+        const prayerData = await fetchAndParsePrayerData();
+        if (!prayerData) return;
+
+        const prayerNames = { FAJR: 'الفجر', SUNRISE: 'الشروق', DHUHR: 'الظهر', ASR: 'العصر', MAGHRIB: 'المغرب', ISHA: 'العشاء' };
+        const elements = {
+            fajrTime: document.getElementById('fajr-time'), sunriseTime: document.getElementById('sunrise-time'),
+            dhuhrTime: document.getElementById('dhuhr-time'), asrTime: document.getElementById('asr-time'),
+            maghribTime: document.getElementById('maghrib-time'), ishaTime: document.getElementById('isha-time'),
+            fajrCard: document.getElementById('fajr-card'), sunriseCard: document.getElementById('sunrise-card'),
+            dhuhrCard: document.getElementById('dhuhr-card'), asrCard: document.getElementById('asr-card'),
+            maghribCard: document.getElementById('maghrib-card'), ishaCard: document.getElementById('isha-card'),
+            nextPrayerName: document.getElementById('next-prayer-name'), timer: document.getElementById('timer'),
+            countdownContainer: document.getElementById('countdown-container'), nextDayBtn: document.getElementById('next-day-btn'),
+            prevDayBtn: document.getElementById('prev-day-btn'),
+            currentDateHeader: document.getElementById('current-date-header')
+        };
+        
+        let displayedDate = new Date();
+        let countdownInterval = null;
+
+        function getDateString(date) {
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        }
+
+        function formatTimeForDisplay(timeStr, prayerKey) {
+            if (!timeStr) return '--:--';
+            const isAm = prayerKey === 'FAJR' || prayerKey === 'SUNRISE';
+            const ampm = isAm ? 'ص' : 'م';
             
-            async function fetchAndParsePrayerData() {
-                const url = 'https://iofahmawi.github.io/salat/amman-2025.csv';
-                try {
-                    const response = await fetch(url);
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    const csvText = await response.text();
-                    return new Map(
-                        csvText.trim().split('\n').slice(1).map(line => {
-                            const [date, fajr, sunrise, dhuhr, asr, maghrib, isha] = line.split(',');
-                            return [date, { FAJR: fajr, SUNRISE: sunrise, DHUHR: dhuhr, ASR: asr, MAGHRIB: maghrib, ISHA: isha }];
-                        })
-                    );
-                } catch (error) {
-                    console.error("Error fetching prayer times:", error);
-                    document.getElementById('current-date-header').textContent = 'فشل تحميل المواقيت. يرجى التحقق من اتصال الإنترنت.';
-                    return null;
+            let [hour, minute] = timeStr.split(':');
+            let h = parseInt(hour, 10);
+            if (!isAm && h > 12) h -= 12; 
+            if (h === 0) h = 12;
+
+            return `${h}:${minute} ${ampm}`;
+        }
+
+        function updateUIForDate(date) {
+            clearInterval(countdownInterval);
+            const dateKey = getDateString(date);
+            const dayData = prayerData.get(dateKey);
+
+            elements.currentDateHeader.textContent = date.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+            Object.keys(prayerNames).forEach(key => {
+                const element = elements[`${key.toLowerCase()}Time`];
+                if (element) {
+                    element.textContent = dayData ? formatTimeForDisplay(dayData[key], key) : '--:--';
                 }
-            }
+            });
 
-            const prayerData = await fetchAndParsePrayerData();
-            if (!prayerData) return;
-
-            const prayerNames = { FAJR: 'الفجر', SUNRISE: 'الشروق', DHUHR: 'الظهر', ASR: 'العصر', MAGHRIB: 'المغرب', ISHA: 'العشاء' };
-            const elements = {
-                fajrTime: document.getElementById('fajr-time'), sunriseTime: document.getElementById('sunrise-time'),
-                dhuhrTime: document.getElementById('dhuhr-time'), asrTime: document.getElementById('asr-time'),
-                maghribTime: document.getElementById('maghrib-time'), ishaTime: document.getElementById('isha-time'),
-                fajrCard: document.getElementById('fajr-card'), sunriseCard: document.getElementById('sunrise-card'),
-                dhuhrCard: document.getElementById('dhuhr-card'), asrCard: document.getElementById('asr-card'),
-                maghribCard: document.getElementById('maghrib-card'), ishaCard: document.getElementById('isha-card'),
-                nextPrayerName: document.getElementById('next-prayer-name'), timer: document.getElementById('timer'),
-                countdownContainer: document.getElementById('countdown-container'), nextDayBtn: document.getElementById('next-day-btn'),
-                prevDayBtn: document.getElementById('prev-day-btn'),
-                currentDateHeader: document.getElementById('current-date-header')
-            };
+            const isToday = (new Date()).toDateString() === date.toDateString();
             
-            let displayedDate = new Date();
-            let countdownInterval = null;
+            elements.countdownContainer.style.visibility = isToday ? 'visible' : 'hidden';
+            document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('active'));
 
-            function getDateString(date) {
-                return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+            if (isToday) {
+                startCountdown();
+                countdownInterval = setInterval(startCountdown, 1000);
             }
+            
+            updateNavigation(date);
+        }
 
-            function formatTimeForDisplay(timeStr, prayerKey) {
-                if (!timeStr) return '--:--';
-                const isAm = prayerKey === 'FAJR' || prayerKey === 'SUNRISE';
-                const ampm = isAm ? 'ص' : 'م';
+        function updateNavigation(date) {
+            const dateArray = Array.from(prayerData.keys());
+            const firstDate = new Date(dateArray[0]); firstDate.setHours(0,0,0,0);
+            const lastDate = new Date(dateArray[dateArray.length - 1]); lastDate.setHours(0, 0, 0, 0);
+            const currentDay = new Date(date); currentDay.setHours(0, 0, 0, 0);
+            
+            elements.prevDayBtn.disabled = currentDay <= firstDate;
+            elements.nextDayBtn.disabled = currentDay >= lastDate;
+        }
+
+        function startCountdown() {
+            const now = new Date();
+            const gracePeriod = 30 * 60 * 1000;
+            const dateKey = getDateString(now);
+            const dayData = prayerData.get(dateKey);
+            if (!dayData) return;
+
+            const prayerTimesToday = Object.keys(prayerNames).map(name => {
+                const time = dayData[name];
+                if (!time) return null;
+                const [h, m] = time.split(':');
                 
-                let [hour, minute] = timeStr.split(':');
-                let h = parseInt(hour, 10);
-                if (!isAm && h > 12) h -= 12; 
-                if (h === 0) h = 12;
-
-                return `${h}:${minute} ${ampm}`;
-            }
-
-            function updateUIForDate(date) {
-                clearInterval(countdownInterval);
-                const dateKey = getDateString(date);
-                const dayData = prayerData.get(dateKey);
-
-                elements.currentDateHeader.textContent = date.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
-                Object.keys(prayerNames).forEach(key => {
-                    const element = elements[`${key.toLowerCase()}Time`];
-                    if (element) {
-                        element.textContent = dayData ? formatTimeForDisplay(dayData[key], key) : '--:--';
-                    }
-                });
-
-                const isToday = (new Date()).toDateString() === date.toDateString();
-                
-                elements.countdownContainer.style.visibility = isToday ? 'visible' : 'hidden';
-                document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('active'));
-
-                if (isToday) {
-                    startCountdown();
-                    countdownInterval = setInterval(startCountdown, 1000);
+                let hour24 = parseInt(h, 10);
+                const isAm = name === 'FAJR' || name === 'SUNRISE';
+                if (!isAm && hour24 < 12) {
+                    hour24 += 12;
                 }
                 
-                updateNavigation(date);
-            }
+                return { name, nameAr: prayerNames[name], card: elements[`${name.toLowerCase()}Card`], date: new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour24, m) };
+            }).filter(Boolean);
 
-            function updateNavigation(date) {
-                const today = new Date(); today.setHours(0, 0, 0, 0);
-                const dateArray = Array.from(prayerData.keys());
-                const firstDate = new Date(dateArray[0]); firstDate.setHours(0,0,0,0);
-                const lastDate = new Date(dateArray[dateArray.length - 1]); lastDate.setHours(0, 0, 0, 0);
-                const currentDay = new Date(date); currentDay.setHours(0, 0, 0, 0);
-                
-                elements.prevDayBtn.disabled = currentDay <= firstDate;
-                elements.nextDayBtn.disabled = currentDay >= lastDate;
-            }
-
-            function startCountdown() {
-                const now = new Date();
-                const gracePeriod = 30 * 60 * 1000;
-                const dateKey = getDateString(now);
-                const dayData = prayerData.get(dateKey);
-                if (!dayData) return;
-
-                const prayerTimesToday = Object.keys(prayerNames).map(name => {
-                    const time = dayData[name];
-                    if (!time) return null;
-                    const [h, m] = time.split(':');
-                    
-                    let hour24 = parseInt(h, 10);
-                    const isAm = name === 'FAJR' || name === 'SUNRISE';
-                    if (!isAm && hour24 < 12) {
-                        hour24 += 12;
-                    }
-                    
-                    return { name, nameAr: prayerNames[name], card: elements[`${name.toLowerCase()}Card`], date: new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour24, m) };
-                }).filter(Boolean);
-
-                let currentPrayer = null, nextPrayer = null;
-                for (const prayer of prayerTimesToday) {
-                    if (now >= prayer.date) {
-                        currentPrayer = prayer;
-                    }
-                    if (now < prayer.date && !nextPrayer) {
-                        nextPrayer = prayer;
-                    }
+            let currentPrayer = null, nextPrayer = null;
+            for (const prayer of prayerTimesToday) {
+                if (now >= prayer.date) {
+                    currentPrayer = prayer;
                 }
+                if (now < prayer.date && !nextPrayer) {
+                    nextPrayer = prayer;
+                }
+            }
 
-                let prayerToHighlight = null;
-                if (!currentPrayer && nextPrayer) {
-                    prayerToHighlight = nextPrayer;
-                } else if (currentPrayer && nextPrayer) {
-                    const timeSinceCurrentPrayer = now - currentPrayer.date;
-                    if (timeSinceCurrentPrayer < gracePeriod) {
-                        prayerToHighlight = currentPrayer;
-                    } else {
-                        prayerToHighlight = nextPrayer;
-                    }
-                } else if (currentPrayer && !nextPrayer) {
+            let prayerToHighlight = null;
+            if (!currentPrayer && nextPrayer) {
+                prayerToHighlight = nextPrayer;
+            } else if (currentPrayer && nextPrayer) {
+                const timeSinceCurrentPrayer = now - currentPrayer.date;
+                if (timeSinceCurrentPrayer < gracePeriod) {
                     prayerToHighlight = currentPrayer;
-                }
-
-                document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('active'));
-                if (prayerToHighlight && prayerToHighlight.card) {
-                    prayerToHighlight.card.classList.add('active');
-                }
-
-                if (nextPrayer) {
-                    elements.nextPrayerName.textContent = `متبقي على أذان ${nextPrayer.nameAr}`;
-                    elements.timer.textContent = getCountdownString(nextPrayer.date - now);
                 } else {
-                    elements.nextPrayerName.textContent = 'انتهت صلوات اليوم';
-                    elements.timer.textContent = 'تقبل الله';
+                    prayerToHighlight = nextPrayer;
                 }
-            }
-            
-            function getCountdownString(diff) {
-                const h = Math.floor(diff / 3600000);
-                const m = Math.floor((diff % 3600000) / 60000);
-                const s = Math.floor((diff % 60000) / 1000);
-                return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            } else if (currentPrayer && !nextPrayer) {
+                prayerToHighlight = currentPrayer;
             }
 
-            elements.nextDayBtn.addEventListener('click', () => {
-                displayedDate.setDate(displayedDate.getDate() + 1);
-                updateUIForDate(displayedDate);
-            });
-            elements.prevDayBtn.addEventListener('click', () => {
-                displayedDate.setDate(displayedDate.getDate() - 1);
-                updateUIForDate(displayedDate);
-            });
+            document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('active'));
+            if (prayerToHighlight && prayerToHighlight.card) {
+                prayerToHighlight.card.classList.add('active');
+            }
 
-            // --- Initial Load ---
+            if (nextPrayer) {
+                elements.nextPrayerName.textContent = `متبقي على أذان ${nextPrayer.nameAr}`;
+                elements.timer.textContent = getCountdownString(nextPrayer.date - now);
+            } else {
+                elements.nextPrayerName.textContent = 'انتهت صلوات اليوم';
+                elements.timer.textContent = 'تقبل الله';
+            }
+        }
+        
+        function getCountdownString(diff) {
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        elements.nextDayBtn.addEventListener('click', () => {
+            displayedDate.setDate(displayedDate.getDate() + 1);
             updateUIForDate(displayedDate);
         });
+        elements.prevDayBtn.addEventListener('click', () => {
+            displayedDate.setDate(displayedDate.getDate() - 1);
+            updateUIForDate(displayedDate);
+        });
+
+        updateUIForDate(displayedDate);
+    });
     </script>
     
-    <!-- === سكريبت تسجيل الـ Service Worker === -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
