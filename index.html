@@ -13,7 +13,7 @@
     <!-- ============================= -->
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -24,55 +24,52 @@
             --primary-color: #E1C56E;
             --disabled-color: #4A5568;
         }
-        /* --- تعديل جذري: التحكم الدقيق بارتفاع الصفحة ومنع التمرير --- */
+        /* --- تعديل هيكلي: ضمان ثبات الصفحة ومنع التمرير --- */
         html, body {
             height: 100%;
             margin: 0;
-            overflow: hidden; /* منع أي تمرير على مستوى الصفحة */
+            overflow: hidden; 
         }
         body {
             font-family: 'Cairo', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            padding: 15px; /* مسافة آمنة حول الحاوية */
+            padding: 15px;
             box-sizing: border-box;
             display: flex;
             justify-content: center;
-            align-items: center;
         }
-        /* --- تعديل جذري: تحويل الحاوية إلى flex column لتوزيع المساحة --- */
+        /* --- تعديل هيكلي: تحويل الحاوية إلى flex column لتوزيع المساحة --- */
         .container {
             width: 100%;
             max-width: 800px;
             height: 100%;
             text-align: center;
             display: flex;
-            flex-direction: column; /* ترتيب العناصر بشكل عمودي */
+            flex-direction: column;
+            padding-top: 25px; /* إعادة المسافة العلوية للعنوان */
+            box-sizing: border-box;
         }
         header {
-             flex-shrink: 0; /* منع العنوان من الانكماش */
+            flex-shrink: 0; /* منع انكماش الهيدر */
         }
         header h1 {
             font-size: 1.8rem;
-            margin: 0; /* تم إزالة الهوامش السابقة */
             margin-bottom: 5px;
-            line-height: 1.6;
+            line-height: 1.7;
         }
         #current-date-header {
             color: var(--primary-color);
             font-size: 1rem;
-            margin: 0 0 1.5rem 0;
+            margin: 0 0 1.5rem 0; /* المسافة بين التاريخ والمواقيت */
             min-height: 1.2em;
         }
-        /* --- تعديل جذري: جعل المنطقة الرئيسية تتمدد لملء الفراغ --- */
-        main {
-            flex-grow: 1; /* هذا هو السطر الأهم: يجعل main تتمدد */
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* توسيط محتوى main عمودياً في المساحة المتاحة */
-            min-height: 0; /* إصلاح لبعض المتصفحات مع flexbox */
+        .prayer-times-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 10px; 
+            flex-shrink: 0; /* منع انكماش المواقيت */
         }
-        .prayer-times-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .prayer-card {
             background-color: var(--card-color);
             padding: 15px;
@@ -83,17 +80,23 @@
         .prayer-card h2 { margin: 0 0 8px; font-size: 1rem; color: var(--primary-color); font-weight: 600; }
         .prayer-card p { margin: 0; font-size: 1.4rem; font-weight: bold; }
         .prayer-card.active { border-color: var(--primary-color); box-shadow: 0 0 15px rgba(225, 197, 110, 0.3); }
-        .next-prayer-container { background-color: var(--card-color); border-radius: 8px; padding: 15px; margin-top: 1.5rem; }
+        .next-prayer-container { 
+            background-color: var(--card-color); 
+            border-radius: 8px; 
+            padding: 15px; 
+            margin-top: 1.5rem; 
+            flex-shrink: 0; /* منع انكماش العداد */
+        }
         #next-prayer-name { color: var(--primary-color); font-size: 1.1rem; font-weight: 600; }
         #timer { margin: 0; font-size: 1.9rem; font-weight: bold; }
         
-        /* --- تعديل جذري: إزالة margin-top والاعتماد على flexbox --- */
+        /* --- تعديل هيكلي: تثبيت الأسهم في الأسفل --- */
         .navigation-controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 1.5rem; /* مسافة بسيطة من المحتوى الذي فوقه */
-            flex-shrink: 0; /* منع الأسهم من الانكماش */
+            margin-top: auto; /* السحر كله هنا: يدفع العنصر لأسفل */
+            padding-top: 1.5rem; /* مسافة بسيطة من المحتوى الذي قد يقترب منه */
         }
         .nav-arrow {
             background: var(--card-color);
@@ -118,27 +121,27 @@
 </head>
 <body>
 
+    <!-- تعديل هيكلي: تم تبسيط الهيكل بإزالة وسم main -->
     <div class="container">
         <header>
             <h1>مواقيت الصلاة لمدينة<br>عمّان</h1>
             <p id="current-date-header">... يتم الآن تحميل المواقيت</p>
         </header>
-        <main>
-            <div> <!-- إضافة حاوية لتساعد في التوسيط داخل main -->
-                <div class="prayer-times-grid">
-                    <div class="prayer-card" id="fajr-card"><h2>الفجر</h2><p id="fajr-time">--:--</p></div>
-                    <div class="prayer-card" id="sunrise-card"><h2>الشروق</h2><p id="sunrise-time">--:--</p></div>
-                    <div class="prayer-card" id="dhuhr-card"><h2>الظهر</h2><p id="dhuhr-time">--:--</p></div>
-                    <div class="prayer-card" id="asr-card"><h2>العصر</h2><p id="asr-time">--:--</p></div>
-                    <div class="prayer-card" id="maghrib-card"><h2>المغرب</h2><p id="maghrib-time">--:--</p></div>
-                    <div class="prayer-card" id="isha-card"><h2>العشاء</h2><p id="isha-time">--:--</p></div>
-                </div>
-                <div class="next-prayer-container" id="countdown-container">
-                    <span id="next-prayer-name"></span>
-                    <p id="timer"></p>
-                </div>
-            </div>
-        </main>
+
+        <div class="prayer-times-grid">
+            <div class="prayer-card" id="fajr-card"><h2>الفجر</h2><p id="fajr-time">--:--</p></div>
+            <div class="prayer-card" id="sunrise-card"><h2>الشروق</h2><p id="sunrise-time">--:--</p></div>
+            <div class="prayer-card" id="dhuhr-card"><h2>الظهر</h2><p id="dhuhr-time">--:--</p></div>
+            <div class="prayer-card" id="asr-card"><h2>العصر</h2><p id="asr-time">--:--</p></div>
+            <div class="prayer-card" id="maghrib-card"><h2>المغرب</h2><p id="maghrib-time">--:--</p></div>
+            <div class="prayer-card" id="isha-card"><h2>العشاء</h2><p id="isha-time">--:--</p></div>
+        </div>
+        
+        <div class="next-prayer-container" id="countdown-container">
+            <span id="next-prayer-name"></span>
+            <p id="timer"></p>
+        </div>
+        
         <div class="navigation-controls">
             <button id="prev-day-btn" class="nav-arrow" aria-label="اليوم السابق">&lt;</button>
             <button id="next-day-btn" class="nav-arrow" aria-label="اليوم التالي">&gt;</button>
