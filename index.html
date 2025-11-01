@@ -29,12 +29,11 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            /* تعديل: تم إزالة التوسيط العمودي وإرجاع padding علوي */
             padding: 25px 15px 15px 15px;
             box-sizing: border-box;
             min-height: 100vh;
             display: flex;
-            justify-content: center; /* للتوسيط الأفقي فقط */
+            justify-content: center; 
         }
         .container {
             width: 100%;
@@ -71,7 +70,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 4.5rem; 
+            margin-top: 4rem; /* تعديل: تم تغيير القيمة بناءً على طلبك */
         }
         .nav-arrow {
             background: var(--card-color);
@@ -99,7 +98,7 @@
     <div class="container">
         <header>
             <h1>مواقيت الصلاة لمدينة<br>عمّان</h1>
-            <p id="current-date-header"></p>
+            <p id="current-date-header">... يتم الآن تحميل المواقيت</p>
         </header>
         <main>
             <div class="prayer-times-grid">
@@ -122,77 +121,36 @@
     </div>
 
     <script>
-        const csvData = `DATE,FAJR,SUNRISE,DHUHR,ASR,MAGHRIB,ISHA
-2025-10-31,5:29,6:46,12:20,3:25,5:54,7:10
-2025-11-01,5:30,6:47,12:20,3:24,5:53,7:10
-2025-11-02,5:31,6:47,12:20,3:23,5:52,7:09
-2025-11-03,5:31,6:48,12:20,3:23,5:51,7:08
-2025-11-04,5:32,6:49,12:20,3:22,5:50,7:07
-2025-11-05,5:33,6:50,12:20,3:22,5:50,7:07
-2025-11-06,5:34,6:51,12:20,3:21,5:49,7:06
-2025-11-07,5:34,6:52,12:20,3:20,5:48,7:05
-2025-11-08,5:35,6:52,12:20,3:20,5:47,7:05
-2025-11-09,5:36,6:53,12:21,3:19,5:47,7:04
-2025-11-10,5:37,6:54,12:21,3:19,5:46,7:04
-2025-11-11,5:37,6:55,12:21,3:18,5:45,7:03
-2025-11-12,5:38,6:56,12:21,3:18,5:45,7:03
-2025-11-13,5:39,6:57,12:21,3:17,5:44,7:02
-2025-11-14,5:40,6:58,12:21,3:17,5:44,7:02
-2025-11-15,5:40,6:58,12:21,3:17,5:43,7:01
-2025-11-16,5:41,6:59,12:21,3:16,5:43,7:01
-2025-11-17,5:42,7:00,12:22,3:16,5:42,7:01
-2025-11-18,5:43,7:01,12:22,3:15,5:42,7:00
-2025-11-19,5:43,7:02,12:22,3:15,5:41,7:00
-2025-11-20,5:44,7:03,12:22,3:15,5:41,7:00
-2025-11-21,5:45,7:04,12:23,3:15,5:41,6:59
-2025-11-22,5:46,7:05,12:23,3:14,5:40,6:59
-2025-11-23,5:46,7:05,12:23,3:14,5:40,6:59
-2025-11-24,5:47,7:06,12:23,3:14,5:40,6:59
-2025-11-25,5:48,7:07,12:24,3:14,5:39,6:59
-2025-11-26,5:49,7:08,12:24,3:14,5:39,6:59
-2025-11-27,5:49,7:09,12:24,3:14,5:39,6:58
-2025-11-28,5:50,7:10,12:25,3:13,5:39,6:58
-2025-11-29,5:51,7:11,12:25,3:13,5:39,6:58
-2025-11-30,5:52,7:11,12:25,3:13,5:39,6:58
-2025-12-01,5:52,7:12,12:26,3:13,5:38,6:58
-2025-12-02,5:53,7:13,12:26,3:13,5:38,6:58
-2025-12-03,5:54,7:14,12:27,3:13,5:38,6:58
-2025-12-04,5:54,7:15,12:27,3:13,5:38,6:59
-2025-12-05,5:55,7:15,12:27,3:14,5:38,6:59
-2025-12-06,5:56,7:16,12:28,3:14,5:39,6:59
-2025-12-07,5:57,7:17,12:28,3:14,5:39,6:59
-2025-12-08,5:57,7:18,12:29,3:14,5:39,6:59
-2025-12-09,5:58,7:18,12:29,3:14,5:39,6:59
-2025-12-10,5:59,7:19,12:30,3:14,5:39,7:00
-2025-12-11,5:59,7:20,12:30,3:15,5:39,7:00
-2025-12-12,6:00,7:21,12:30,3:15,5:40,7:00
-2025-12-13,6:00,7:21,12:31,3:15,5:40,7:01
-2025-12-14,6:01,7:22,12:31,3:16,5:40,7:01
-2025-12-15,6:02,7:23,12:32,3:16,5:40,7:01
-2025-12-16,6:02,7:23,12:32,3:16,5:41,7:02
-2025-12-17,6:03,7:24,12:33,3:17,5:41,7:02
-2025-12-18,6:03,7:24,12:33,3:17,5:42,7:03
-2025-12-19,6:04,7:25,12:34,3:18,5:42,7:03
-2025-12-20,6:05,7:25,12:34,3:18,5:43,7:03
-2025-12-21,6:05,7:26,12:35,3:18,5:43,7:04
-2025-12-22,6:06,7:26,12:35,3:19,5:44,7:04
-2025-12-23,6:06,7:27,12:36,3:20,5:44,7:05
-2025-12-24,6:06,7:27,12:36,3:20,5:45,7:06
-2025-12-25,6:07,7:28,12:37,3:21,5:45,7:06
-2025-12-26,6:07,7:28,12:37,3:21,5:46,7:07
-2025-12-27,6:08,7:29,12:38,3:22,5:46,7:07
-2025-12-28,6:08,7:29,12:38,3:22,5:47,7:08
-2025-12-29,6:08,7:29,12:39,3:23,5:48,7:08
-2025-12-30,6:09,7:30,12:39,3:24,5:48,7:09
-2025-12-31,6:09,7:30,12:40,3:24,5:49,7:10`;
+        // تعديل: تم حذف البيانات الثابتة من هنا
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const prayerData = new Map(
-                csvData.trim().split('\n').slice(1).map(line => {
-                    const [date, fajr, sunrise, dhuhr, asr, maghrib, isha] = line.split(',');
-                    return [date, { FAJR: fajr, SUNRISE: sunrise, DHUHR: dhuhr, ASR: asr, MAGHRIB: maghrib, ISHA: isha }];
-                })
-            );
+        document.addEventListener('DOMContentLoaded', async () => {
+            
+            // --- تعديل: دالة جديدة لجلب وتحليل بيانات الصلاة من الرابط ---
+            async function fetchAndParsePrayerData() {
+                const url = 'https://iofahmawi.github.io/salat/amman-2025.csv';
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error('فشل استجابة الشبكة');
+                    }
+                    const csvText = await response.text();
+                    return new Map(
+                        csvText.trim().split('\n').slice(1).map(line => {
+                            const [date, fajr, sunrise, dhuhr, asr, maghrib, isha] = line.split(',');
+                            return [date, { FAJR: fajr, SUNRISE: sunrise, DHUHR: dhuhr, ASR: asr, MAGHRIB: maghrib, ISHA: isha }];
+                        })
+                    );
+                } catch (error) {
+                    console.error("خطأ في تحميل مواقيت الصلاة:", error);
+                    document.getElementById('current-date-header').textContent = 'فشل تحميل المواقيت. يرجى التحقق من اتصال الإنترنت.';
+                    return null;
+                }
+            }
+
+            const prayerData = await fetchAndParsePrayerData();
+            if (!prayerData) return; // إيقاف التنفيذ إذا فشل تحميل البيانات
+
+            // -----------------------------------------------------------------
 
             const prayerNames = { FAJR: 'الفجر', SUNRISE: 'الشروق', DHUHR: 'الظهر', ASR: 'العصر', MAGHRIB: 'المغرب', ISHA: 'العشاء' };
             const elements = {
@@ -215,14 +173,12 @@
                 return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
             }
 
-            function formatTimeForDisplay(timeStr) {
+            // --- تعديل: تم إصلاح دالة التوقيت بالكامل ---
+            function formatTimeForDisplay(timeStr, prayerKey) {
                 if (!timeStr) return '--:--';
-                let [hour, minute] = timeStr.split(':');
-                let h = parseInt(hour, 10);
-                const ampm = (h < 12) ? 'ص' : 'م';
-                h = h % 12;
-                if (h === 0) h = 12;
-                return `${h}:${minute} ${ampm}`;
+                const isAm = prayerKey === 'FAJR' || prayerKey === 'SUNRISE';
+                const ampm = isAm ? 'ص' : 'م';
+                return `${timeStr} ${ampm}`;
             }
 
             function updateUIForDate(date) {
@@ -235,14 +191,14 @@
                 Object.keys(prayerNames).forEach(key => {
                     const element = elements[`${key.toLowerCase()}Time`];
                     if (element) {
-                        element.textContent = dayData ? formatTimeForDisplay(dayData[key]) : '--:--';
+                        // تمرير اسم الصلاة (key) للدالة الجديدة
+                        element.textContent = dayData ? formatTimeForDisplay(dayData[key], key) : '--:--';
                     }
                 });
 
                 const isToday = (new Date()).toDateString() === date.toDateString();
                 
                 elements.countdownContainer.style.visibility = isToday ? 'visible' : 'hidden';
-
                 document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('active'));
 
                 if (isToday) {
@@ -256,10 +212,12 @@
             function updateNavigation(date) {
                 const today = new Date(); today.setHours(0, 0, 0, 0);
                 const dateArray = Array.from(prayerData.keys());
+                const firstDate = new Date(dateArray[0]); firstDate.setHours(0,0,0,0);
                 const lastDate = new Date(dateArray[dateArray.length - 1]); lastDate.setHours(0, 0, 0, 0);
                 const currentDay = new Date(date); currentDay.setHours(0, 0, 0, 0);
-
-                elements.prevDayBtn.disabled = currentDay <= today;
+                
+                // تعديل بسيط: زر السابق يعتمد على أول يوم في البيانات بدلاً من اليوم الحالي
+                elements.prevDayBtn.disabled = currentDay <= firstDate;
                 elements.nextDayBtn.disabled = currentDay >= lastDate;
             }
 
@@ -273,7 +231,14 @@
                     const time = dayData[name];
                     if (!time) return null;
                     const [h, m] = time.split(':');
-                    return { name, nameAr: prayerNames[name], card: elements[`${name.toLowerCase()}Card`], date: new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m) };
+                    let hour24 = parseInt(h, 10);
+
+                    // تحويل ساعات المساء إلى توقيت 24 ساعة للعد التنازلي
+                    if (name !== 'FAJR' && name !== 'SUNRISE' && hour24 < 12) {
+                        hour24 += 12;
+                    }
+                    
+                    return { name, nameAr: prayerNames[name], card: elements[`${name.toLowerCase()}Card`], date: new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour24, m) };
                 }).filter(Boolean);
 
                 let currentPrayer = null, nextPrayer = null;
@@ -286,7 +251,7 @@
                 if (currentPrayer) currentPrayer.card.classList.add('active');
 
                 if (nextPrayer) {
-                    elements.nextPrayerName.textContent = `لصلاة ${nextPrayer.nameAr}`;
+                    elements.nextPrayerName.textContent = `متبقي على أذان ${nextPrayer.nameAr}`;
                     elements.timer.textContent = getCountdownString(nextPrayer.date - now);
                 } else {
                     elements.nextPrayerName.textContent = 'انتهت صلوات اليوم';
