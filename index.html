@@ -224,7 +224,7 @@
         const cityHeader = document.getElementById('city-header');
         let prayerData = null;
         let countdownInterval = null;
-        let displayedDate = new التوقيت;
+        let displayedDate = new Date(); // <-- *** تم إصلاح الخطأ هنا ***
 
         const prayerNames = { FAJR: 'الفجر', SUNRISE: 'الشروق', DHUHR: 'الظهر', ASR: 'العصر', MAGHRIB: 'المغرب', ISHA: 'العشاء' };
         const elements = {
@@ -273,16 +273,12 @@
             return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
         }
 
-        // --- دالة عرض التوقيت المصححة ---
         function formatTimeForDisplay(timeStr) {
             if (!timeStr) return '--:--';
             let [hour, minute] = timeStr.split(':');
             let h = parseInt(hour, 10);
-            
-            // المنطق الصحيح: إذا كانت الساعة 12 أو أكثر فهي "م"
-            const ampm = h >= 12 ? 'م' : 'ص'; 
-            
-            h = h % 12 || 12; // تحويل الساعة لنظام 12 ساعة
+            const ampm = h >= 12 ? 'م' : 'ص';
+            h = h % 12 || 12;
             return `${h}:${minute} ${ampm}`;
         }
 
