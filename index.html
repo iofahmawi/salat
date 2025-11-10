@@ -98,7 +98,7 @@
         }
         
         async function initializeCity(cityId, cityName) {
-            cityHeader.innerHTML = `مواقيت الصلاة لمدينة<br>${cityName}`;
+            cityHeader.innerHTML = `مواقيت الصلاة لمحافظة<br>${cityName}`;
             elements.currentDateHeader.textContent = '... يتم الآن تحميل المواقيت';
             prayerData = await fetchAndParsePrayerData(cityId);
             if (prayerData) {
