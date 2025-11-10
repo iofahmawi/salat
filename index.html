@@ -64,7 +64,9 @@
         let countdownInterval = null;
         let displayedDate = new Date();
 
+        // --- تم إصلاح الخطأ المطبعي هنا ---
         const prayerNames = { FAJR: 'الفجر', SUNRISE: 'الشروق', DHUHR: 'الظهر', ASR: 'العصر', MAGHRIB: 'المغرب', ISHA: 'العشاء' };
+        
         const elements = {
             fajrTime: document.getElementById('fajr-time'), sunriseTime: document.getElementById('sunrise-time'),
             dhuhrTime: document.getElementById('dhuhr-time'), asrTime: document.getElementById('asr-time'),
@@ -86,6 +88,7 @@
                 const csvText = await response.text();
                 return new Map(
                     csvText.trim().split('\n').slice(1).map(line => {
+                        // --- وتم إصلاح الخطأ المطبعي هنا أيضاً ---
                         const [date, fajr, sunrise, dhuhr, asr, maghrib, isha] = line.split(',');
                         return [date, { FAJR: fajr, SUNRISE: sunrise, DHUHR: dhuhr, ASR: asr, MAGHRIB: maghrib, ISHA: isha }];
                     })
@@ -98,7 +101,7 @@
         }
         
         async function initializeCity(cityId, cityName) {
-            cityHeader.innerHTML = `مواقيت الصلاة لمحافظة<br>${cityName}`;
+            cityHeader.innerHTML = `مواقيت الصلاة لمدينة<br>${cityName}`;
             elements.currentDateHeader.textContent = '... يتم الآن تحميل المواقيت';
             prayerData = await fetchAndParsePrayerData(cityId);
             if (prayerData) {
@@ -111,16 +114,10 @@
             return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
         }
 
-        // --- تم تطبيق منطقك الصحيح هنا ---
         function formatTimeForDisplay(timeStr, prayerKey) {
             if (!timeStr || !timeStr.includes(':')) return '--:--';
             
-            let ampm;
-            if (prayerKey === 'FAJR' || prayerKey === 'SUNRISE') {
-                ampm = 'ص';
-            } else {
-                ampm = 'م';
-            }
+            let ampm = (prayerKey === 'FAJR' || prayerKey === 'SUNRISE') ? 'ص' : 'م';
 
             let [hour, minute] = timeStr.split(':');
             let h = parseInt(hour, 10);
@@ -134,12 +131,16 @@
             if (!prayerData) return;
             const dateKey = getDateString(date);
             const dayData = prayerData.get(dateKey);
-            elements.currentDateHeader.textContent = date.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+            const weekday = date.toLocaleDateString('ar-EG', { weekday: 'long' });
+            const day = date.getDate();
+            const month = date.toLocaleDateString('ar-EG', { month: 'long' });
+            const year = date.getFullYear();
+            elements.currentDateHeader.textContent = `${weekday}، ${day} ${month} ${year}`;
             
             Object.keys(prayerNames).forEach(key => {
                 const element = elements[`${key.toLowerCase()}Time`];
                 if (element) {
-                    // تم تمرير اسم الصلاة (key) إلى الدالة
                     element.textContent = dayData && dayData[key] ? formatTimeForDisplay(dayData[key], key) : '--:--';
                 }
             });
