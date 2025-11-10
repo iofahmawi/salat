@@ -1,4 +1,4 @@
-const CACHE_NAME = 'prayer-times-cache-v8'; // <-- 1. تم تغيير رقم الإصدار
+const CACHE_NAME = 'prayer-times-cache-v9'; // <-- 1. تم تغيير رقم الإصدار
 const urlsToCache = [
   '/',
   'index.html',
