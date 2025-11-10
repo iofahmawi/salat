@@ -137,7 +137,7 @@
             border-radius: 10px;
             text-align: center;
             width: 90%;
-            max-width: 320px; /* تقليل عرض النافذة بشكل كبير */
+            max-width: 320px;
         }
         .modal-content h2 {
             margin-top: 0;
@@ -147,7 +147,7 @@
         }
         .city-selection-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* شبكة ثلاثية مثل الشاشة الرئيسية */
+            grid-template-columns: repeat(3, 1fr);
             gap: 10px; 
         }
         .city-btn {
@@ -161,8 +161,6 @@
             cursor: pointer;
             transition: background-color 0.3s, border-color 0.3s;
             -webkit-tap-highlight-color: transparent;
-
-            /* لجعل الزر مربعاً والنص في المنتصف */
             aspect-ratio: 1 / 1;
             padding: 5px;
             display: flex;
@@ -178,7 +176,6 @@
 </head>
 <body>
 
-    <!-- === النافذة المنبثقة لاختيار المدينة === -->
     <div id="city-modal" class="modal-overlay">
         <div class="modal-content">
             <h2>اختر محافظتك</h2>
@@ -193,7 +190,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="container">
         <header>
@@ -228,7 +224,7 @@
         const cityHeader = document.getElementById('city-header');
         let prayerData = null;
         let countdownInterval = null;
-        let displayedDate = new Date();
+        let displayedDate = new التوقيت;
 
         const prayerNames = { FAJR: 'الفجر', SUNRISE: 'الشروق', DHUHR: 'الظهر', ASR: 'العصر', MAGHRIB: 'المغرب', ISHA: 'العشاء' };
         const elements = {
@@ -277,12 +273,16 @@
             return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
         }
 
+        // --- دالة عرض التوقيت المصححة ---
         function formatTimeForDisplay(timeStr) {
-             if (!timeStr) return '--:--';
+            if (!timeStr) return '--:--';
             let [hour, minute] = timeStr.split(':');
             let h = parseInt(hour, 10);
-            const ampm = h >= 12 ? 'م' : 'ص';
-            h = h % 12 || 12;
+            
+            // المنطق الصحيح: إذا كانت الساعة 12 أو أكثر فهي "م"
+            const ampm = h >= 12 ? 'م' : 'ص'; 
+            
+            h = h % 12 || 12; // تحويل الساعة لنظام 12 ساعة
             return `${h}:${minute} ${ampm}`;
         }
 
@@ -395,7 +395,6 @@
             return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         }
 
-        // --- Event Listeners ---
         citySelectionContainer.addEventListener('click', (e) => {
             const button = e.target.closest('.city-btn');
             if (button) {
@@ -423,7 +422,6 @@
             updateUIForDate(displayedDate);
         });
 
-        // --- Initial Load ---
         const savedCityId = localStorage.getItem('selectedCityId');
         const savedCityName = localStorage.getItem('selectedCityName');
 
