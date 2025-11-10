@@ -4,174 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مواقيت الصلاة</title>
-
-    <!-- === الإضافات الجديدة لـ PWA === -->
     <meta name="theme-color" content="#0D1B2A">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icon-1024.png">
     <link rel="apple-touch-icon" href="icon-1024.png">
-    <!-- ============================= -->
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-
     <style>
-        :root {
-            --bg-color: #0D1B2A;
-            --card-color: #1B263B;
-            --text-color: #E0E1DD;
-            --primary-color: #E1C56E;
-            --disabled-color: #4A5568;
-        }
-        html, body {
-            height: 100%;
-            margin: 0;
-            overflow: hidden; 
-        }
-        body {
-            font-family: 'Cairo', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            padding: 15px;
-            box-sizing: border-box;
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            width: 100%;
-            max-width: 800px;
-            height: 100%;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            padding-top: 7.5px;
-            padding-bottom: 30px;
-            box-sizing: border-box;
-        }
-        header {
-            flex-shrink: 0;
-        }
-        header h1 {
-            font-size: 1.8rem;
-            margin-bottom: 5px;
-            line-height: 1.7;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-        #current-date-header {
-            color: var(--primary-color);
-            font-size: 1rem;
-            margin: 0 0 1.5rem 0;
-            min-height: 1.2em;
-        }
-        .prayer-times-grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 10px; 
-            flex-shrink: 0;
-        }
-        .prayer-card {
-            background-color: var(--card-color);
-            padding: 15px;
-            border-radius: 8px;
-            border: 2px solid transparent;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        .prayer-card h2 { margin: 0 0 8px; font-size: 1rem; color: var(--primary-color); font-weight: 600; }
-        .prayer-card p { margin: 0; font-size: 1.4rem; font-weight: bold; }
-        .prayer-card.active { border-color: var(--primary-color); box-shadow: 0 0 15px rgba(225, 197, 110, 0.3); }
-        .next-prayer-container { 
-            background-color: var(--card-color); 
-            border-radius: 8px; 
-            padding: 15px; 
-            margin-top: 1.5rem; 
-            flex-shrink: 0;
-        }
-        #next-prayer-name { color: var(--primary-color); font-size: 1.1rem; font-weight: 600; }
-        #timer { margin: 0; font-size: 1.9rem; font-weight: bold; }
-        .navigation-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: auto;
-            padding-top: 1.5rem;
-        }
-        .nav-arrow {
-            background: var(--card-color);
-            border: none;
-            color: var(--primary-color);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding-bottom: 5px;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .nav-arrow:hover:not(:disabled) { background-color: #2a3b52; }
-        .nav-arrow:disabled { color: var(--disabled-color); background-color: var(--card-color); cursor: not-allowed; opacity: 0.5; }
-
-        /* === CSS للنافذة المنبثقة (تصميم جديد ومدمج) === */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            display: none; 
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background-color: var(--bg-color);
-            border: 2px solid var(--card-color);
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            width: 90%;
-            max-width: 320px;
-        }
-        .modal-content h2 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            color: var(--primary-color);
-        }
-        .city-selection-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px; 
-        }
-        .city-btn {
-            background-color: var(--card-color);
-            color: var(--text-color);
-            border: 1px solid var(--card-color);
-            border-radius: 8px;
-            font-family: 'Cairo', sans-serif;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s, border-color 0.3s;
-            -webkit-tap-highlight-color: transparent;
-            aspect-ratio: 1 / 1;
-            padding: 5px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-        .city-btn:hover {
-            background-color: #2a3b52;
-            border-color: var(--primary-color);
-        }
+        :root{--bg-color:#0D1B2A;--card-color:#1B263B;--text-color:#E0E1DD;--primary-color:#E1C56E;--disabled-color:#4A5568}html,body{height:100%;margin:0;overflow:hidden}body{font-family:'Cairo',sans-serif;background-color:var(--bg-color);color:var(--text-color);padding:15px;box-sizing:border-box;display:flex;justify-content:center}.container{width:100%;max-width:800px;height:100%;text-align:center;display:flex;flex-direction:column;padding-top:7.5px;padding-bottom:30px;box-sizing:border-box}header{flex-shrink:0}header h1{font-size:1.8rem;margin-bottom:5px;line-height:1.7;cursor:pointer;-webkit-tap-highlight-color:transparent}#current-date-header{color:var(--primary-color);font-size:1rem;margin:0 0 1.5rem 0;min-height:1.2em}.prayer-times-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;flex-shrink:0}.prayer-card{background-color:var(--card-color);padding:15px;border-radius:8px;border:2px solid transparent;transition:border-color .3s,box-shadow .3s}.prayer-card h2{margin:0 0 8px;font-size:1rem;color:var(--primary-color);font-weight:600}.prayer-card p{margin:0;font-size:1.4rem;font-weight:bold}.prayer-card.active{border-color:var(--primary-color);box-shadow:0 0 15px rgba(225,197,110,.3)}.next-prayer-container{background-color:var(--card-color);border-radius:8px;padding:15px;margin-top:1.5rem;flex-shrink:0}#next-prayer-name{color:var(--primary-color);font-size:1.1rem;font-weight:600}#timer{margin:0;font-size:1.9rem;font-weight:bold}.navigation-controls{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:1.5rem}.nav-arrow{background:var(--card-color);border:none;color:var(--primary-color);border-radius:50%;width:50px;height:50px;font-size:2rem;font-weight:bold;cursor:pointer;transition:background-color .3s;display:flex;justify-content:center;align-items:center;padding-bottom:5px;-webkit-tap-highlight-color:transparent}.nav-arrow:hover:not(:disabled){background-color:#2a3b52}.nav-arrow:disabled{color:var(--disabled-color);background-color:var(--card-color);cursor:not-allowed;opacity:.5}.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,.85);display:none;justify-content:center;align-items:center;z-index:1000}.modal-content{background-color:var(--bg-color);border:2px solid var(--card-color);padding:20px;border-radius:10px;text-align:center;width:90%;max-width:320px}.modal-content h2{margin-top:0;margin-bottom:20px;font-size:1.5rem;color:var(--primary-color)}.city-selection-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.city-btn{background-color:var(--card-color);color:var(--text-color);border:1px solid var(--card-color);border-radius:8px;font-family:'Cairo',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:background-color .3s,border-color .3s;-webkit-tap-highlight-color:transparent;aspect-ratio:1/1;padding:5px;display:flex;justify-content:center;align-items:center;text-align:center}.city-btn:hover{background-color:#2a3b52;border-color:var(--primary-color)}
     </style>
 </head>
 <body>
@@ -196,7 +37,6 @@
             <h1 id="city-header">مواقيت الصلاة</h1>
             <p id="current-date-header">... الرجاء اختيار المدينة</p>
         </header>
-
         <div class="prayer-times-grid">
             <div class="prayer-card" id="fajr-card"><h2>الفجر</h2><p id="fajr-time">--:--</p></div>
             <div class="prayer-card" id="sunrise-card"><h2>الشروق</h2><p id="sunrise-time">--:--</p></div>
@@ -205,12 +45,10 @@
             <div class="prayer-card" id="maghrib-card"><h2>المغرب</h2><p id="maghrib-time">--:--</p></div>
             <div class="prayer-card" id="isha-card"><h2>العشاء</h2><p id="isha-time">--:--</p></div>
         </div>
-
         <div class="next-prayer-container" id="countdown-container">
             <span id="next-prayer-name"></span>
             <p id="timer"></p>
         </div>
-
         <div class="navigation-controls">
             <button id="prev-day-btn" class="nav-arrow" aria-label="اليوم السابق">&lt;</button>
             <button id="next-day-btn" class="nav-arrow" aria-label="اليوم التالي">&gt;</button>
@@ -224,7 +62,7 @@
         const cityHeader = document.getElementById('city-header');
         let prayerData = null;
         let countdownInterval = null;
-        let displayedDate = new Date(); // <-- *** تم إصلاح الخطأ هنا ***
+        let displayedDate = new Date();
 
         const prayerNames = { FAJR: 'الفجر', SUNRISE: 'الشروق', DHUHR: 'الظهر', ASR: 'العصر', MAGHRIB: 'المغرب', ISHA: 'العشاء' };
         const elements = {
@@ -273,40 +111,46 @@
             return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
         }
 
-        function formatTimeForDisplay(timeStr) {
-            if (!timeStr) return '--:--';
+        // --- تم تطبيق منطقك الصحيح هنا ---
+        function formatTimeForDisplay(timeStr, prayerKey) {
+            if (!timeStr || !timeStr.includes(':')) return '--:--';
+            
+            let ampm;
+            if (prayerKey === 'FAJR' || prayerKey === 'SUNRISE') {
+                ampm = 'ص';
+            } else {
+                ampm = 'م';
+            }
+
             let [hour, minute] = timeStr.split(':');
             let h = parseInt(hour, 10);
-            const ampm = h >= 12 ? 'م' : 'ص';
             h = h % 12 || 12;
+            
             return `${h}:${minute} ${ampm}`;
         }
 
         function updateUIForDate(date) {
             clearInterval(countdownInterval);
             if (!prayerData) return;
-
             const dateKey = getDateString(date);
             const dayData = prayerData.get(dateKey);
-
             elements.currentDateHeader.textContent = date.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
+            
             Object.keys(prayerNames).forEach(key => {
                 const element = elements[`${key.toLowerCase()}Time`];
                 if (element) {
-                    element.textContent = dayData && dayData[key] ? formatTimeForDisplay(dayData[key]) : '--:--';
+                    // تم تمرير اسم الصلاة (key) إلى الدالة
+                    element.textContent = dayData && dayData[key] ? formatTimeForDisplay(dayData[key], key) : '--:--';
                 }
             });
 
             const isToday = (new Date()).toDateString() === date.toDateString();
             elements.countdownContainer.style.visibility = isToday ? 'visible' : 'hidden';
             document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('active'));
-
             if (isToday) {
                 startCountdown();
                 countdownInterval = setInterval(startCountdown, 1000);
             }
-
             updateNavigation(date);
         }
 
@@ -320,7 +164,6 @@
             const firstDate = new Date(dateArray[0]); firstDate.setHours(0,0,0,0);
             const lastDate = new Date(dateArray[dateArray.length - 1]); lastDate.setHours(0, 0, 0, 0);
             const currentDay = new Date(date); currentDay.setHours(0, 0, 0, 0);
-
             elements.prevDayBtn.disabled = currentDay <= firstDate;
             elements.nextDayBtn.disabled = currentDay >= lastDate;
         }
@@ -331,20 +174,17 @@
             const dateKey = getDateString(now);
             const dayData = prayerData.get(dateKey);
             if (!dayData) return;
-
             const prayerTimesToday = Object.keys(prayerNames).map(name => {
                 const time = dayData[name];
                 if (!time) return null;
                 const [h, m] = time.split(':');
                 return { name, nameAr: prayerNames[name], card: elements[`${name.toLowerCase()}Card`], date: new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m) };
             }).filter(Boolean);
-
             let currentPrayer = null, nextPrayer = null;
             for (const prayer of prayerTimesToday) {
                 if (now >= prayer.date) currentPrayer = prayer;
                 if (now < prayer.date && !nextPrayer) nextPrayer = prayer;
             }
-            
             if (!nextPrayer) {
                 const tomorrow = new Date(now);
                 tomorrow.setDate(now.getDate() + 1);
@@ -355,7 +195,6 @@
                     nextPrayer = { name: 'FAJR', nameAr: prayerNames['FAJR'], card: elements['fajrCard'], date: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), h, m) };
                 }
             }
-
             let prayerToHighlight = null;
             if (currentPrayer && (now - currentPrayer.date < gracePeriod)) {
                 prayerToHighlight = currentPrayer;
@@ -368,12 +207,10 @@
             } else {
                  prayerToHighlight = currentPrayer;
             }
-
             document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('active'));
             if (prayerToHighlight && prayerToHighlight.card) {
                 prayerToHighlight.card.classList.add('active');
             }
-
             if (nextPrayer) {
                 elements.nextPrayerName.textContent = `متبقي على أذان ${nextPrayer.nameAr}`;
                 elements.timer.textContent = getCountdownString(nextPrayer.date - now);
@@ -382,66 +219,12 @@
                 elements.timer.textContent = 'تقبل الله';
             }
         }
-
-        function getCountdownString(diff) {
-            if (diff < 0) return '00:00:00';
-            const h = Math.floor(diff / 3600000);
-            const m = Math.floor((diff % 3600000) / 60000);
-            const s = Math.floor((diff % 60000) / 1000);
-            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-        }
-
-        citySelectionContainer.addEventListener('click', (e) => {
-            const button = e.target.closest('.city-btn');
-            if (button) {
-                const cityId = button.dataset.city;
-                const cityName = button.dataset.name;
-                localStorage.setItem('selectedCityId', cityId);
-                localStorage.setItem('selectedCityName', cityName);
-                modal.style.display = 'none';
-                initializeCity(cityId, cityName);
-            }
-        });
-
-        cityHeader.addEventListener('click', () => {
-            modal.style.display = 'flex';
-        });
-        
-        elements.nextDayBtn.addEventListener('click', () => {
-            if (!prayerData) return;
-            displayedDate.setDate(displayedDate.getDate() + 1);
-            updateUIForDate(displayedDate);
-        });
-        elements.prevDayBtn.addEventListener('click', () => {
-            if (!prayerData) return;
-            displayedDate.setDate(displayedDate.getDate() - 1);
-            updateUIForDate(displayedDate);
-        });
-
-        const savedCityId = localStorage.getItem('selectedCityId');
-        const savedCityName = localStorage.getItem('selectedCityName');
-
-        if (savedCityId && savedCityName) {
-            initializeCity(savedCityId, savedCityName);
-        } else {
-            modal.style.display = 'flex';
-        }
+        function getCountdownString(diff){if(diff<0)return"00:00:00";const h=Math.floor(diff/36e5),m=Math.floor(diff%36e5/6e4),s=Math.floor(diff%6e4/1e3);return`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`}
+        citySelectionContainer.addEventListener('click',e=>{const t=e.target.closest('.city-btn');if(t){const e=t.dataset.city,n=t.dataset.name;localStorage.setItem('selectedCityId',e),localStorage.setItem('selectedCityName',n),modal.style.display='none',initializeCity(e,n)}}),cityHeader.addEventListener('click',()=>{modal.style.display='flex'}),elements.nextDayBtn.addEventListener('click',()=>{if(!prayerData)return;displayedDate.setDate(displayedDate.getDate()+1),updateUIForDate(displayedDate)}),elements.prevDayBtn.addEventListener('click',()=>{if(!prayerData)return;displayedDate.setDate(displayedDate.getDate()-1),updateUIForDate(displayedDate)});const savedCityId=localStorage.getItem('selectedCityId'),savedCityName=localStorage.getItem('selectedCityName');savedCityId&&savedCityName?initializeCity(savedCityId,savedCityName):modal.style.display='flex'
     });
     </script>
-
     <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                    })
-                    .catch(error => {
-                        console.log('ServiceWorker registration failed: ', error);
-                    });
-            });
-        }
+        if('serviceWorker'in navigator)window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').then(e=>{console.log('ServiceWorker registration successful with scope: ',e.scope)}).catch(e=>{console.log('ServiceWorker registration failed: ',e)})})
     </script>
-
 </body>
 </html>
