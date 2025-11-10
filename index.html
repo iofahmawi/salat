@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مواقيت الصلاة - عمّان</title>
-    
+    <title>مواقيت الصلاة</title>
+
     <!-- === الإضافات الجديدة لـ PWA === -->
     <meta name="theme-color" content="#0D1B2A">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icon-1024.png">
     <link rel="apple-touch-icon" href="icon-1024.png">
     <!-- ============================= -->
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
             --bg-color: #0D1B2A;
@@ -45,8 +45,8 @@
             text-align: center;
             display: flex;
             flex-direction: column;
-            padding-top: 7.5px; /* تم تعديل المسافة العلوية بناءً على طلبك */
-            padding-bottom: 30px; /* تعديل: تمت إضافة هذا السطر لرفع الأسهم */
+            padding-top: 7.5px;
+            padding-bottom: 30px;
             box-sizing: border-box;
         }
         header {
@@ -56,6 +56,8 @@
             font-size: 1.8rem;
             margin-bottom: 5px;
             line-height: 1.7;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
         #current-date-header {
             color: var(--primary-color);
@@ -88,7 +90,6 @@
         }
         #next-prayer-name { color: var(--primary-color); font-size: 1.1rem; font-weight: 600; }
         #timer { margin: 0; font-size: 1.9rem; font-weight: bold; }
-        
         .navigation-controls {
             display: flex;
             justify-content: space-between;
@@ -115,14 +116,89 @@
         }
         .nav-arrow:hover:not(:disabled) { background-color: #2a3b52; }
         .nav-arrow:disabled { color: var(--disabled-color); background-color: var(--card-color); cursor: not-allowed; opacity: 0.5; }
+
+        /* === CSS للنافذة المنبثقة (تصميم جديد ومدمج) === */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: none; 
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: var(--bg-color);
+            border: 2px solid var(--card-color);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 90%;
+            max-width: 320px; /* تقليل عرض النافذة بشكل كبير */
+        }
+        .modal-content h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        .city-selection-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* شبكة ثلاثية مثل الشاشة الرئيسية */
+            gap: 10px; 
+        }
+        .city-btn {
+            background-color: var(--card-color);
+            color: var(--text-color);
+            border: 1px solid var(--card-color);
+            border-radius: 8px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+            -webkit-tap-highlight-color: transparent;
+
+            /* لجعل الزر مربعاً والنص في المنتصف */
+            aspect-ratio: 1 / 1;
+            padding: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .city-btn:hover {
+            background-color: #2a3b52;
+            border-color: var(--primary-color);
+        }
     </style>
 </head>
 <body>
 
+    <!-- === النافذة المنبثقة لاختيار المدينة === -->
+    <div id="city-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>اختر محافظتك</h2>
+            <div id="city-selection" class="city-selection-grid">
+                <button class="city-btn" data-city="amman" data-name="عمّان">عمّان</button>
+                <button class="city-btn" data-city="zarqa" data-name="الزرقاء">الزرقاء</button>
+                <button class="city-btn" data-city="irbid" data-name="إربد">إربد</button>
+                <button class="city-btn" data-city="mafraq" data-name="المفرق">المفرق</button>
+                <button class="city-btn" data-city="ajloun" data-name="عجلون">عجلون</button>
+                <button class="city-btn" data-city="jerash" data-name="جرش">جرش</button>
+                <button class="city-btn" data-city="karak" data-name="الكرك">الكرك</button>
+            </div>
+        </div>
+    </div>
+
+
     <div class="container">
         <header>
-            <h1>مواقيت الصلاة لمدينة<br>عمّان</h1>
-            <p id="current-date-header">... يتم الآن تحميل المواقيت</p>
+            <h1 id="city-header">مواقيت الصلاة</h1>
+            <p id="current-date-header">... الرجاء اختيار المدينة</p>
         </header>
 
         <div class="prayer-times-grid">
@@ -133,12 +209,12 @@
             <div class="prayer-card" id="maghrib-card"><h2>المغرب</h2><p id="maghrib-time">--:--</p></div>
             <div class="prayer-card" id="isha-card"><h2>العشاء</h2><p id="isha-time">--:--</p></div>
         </div>
-        
+
         <div class="next-prayer-container" id="countdown-container">
             <span id="next-prayer-name"></span>
             <p id="timer"></p>
         </div>
-        
+
         <div class="navigation-controls">
             <button id="prev-day-btn" class="nav-arrow" aria-label="اليوم السابق">&lt;</button>
             <button id="next-day-btn" class="nav-arrow" aria-label="اليوم التالي">&gt;</button>
@@ -146,28 +222,13 @@
     </div>
 
     <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-        async function fetchAndParsePrayerData() {
-            const url = 'https://iofahmawi.github.io/salat/amman-2025.csv';
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Network response was not ok');
-                const csvText = await response.text();
-                return new Map(
-                    csvText.trim().split('\n').slice(1).map(line => {
-                        const [date, fajr, sunrise, dhuhr, asr, maghrib, isha] = line.split(',');
-                        return [date, { FAJR: fajr, SUNRISE: sunrise, DHUHR: dhuhr, ASR: asr, MAGHRIB: maghrib, ISHA: isha }];
-                    })
-                );
-            } catch (error) {
-                console.error("Error fetching prayer times:", error);
-                document.getElementById('current-date-header').textContent = 'فشل تحميل المواقيت. يرجى التحقق من اتصال الإنترنت.';
-                return null;
-            }
-        }
-
-        const prayerData = await fetchAndParsePrayerData();
-        if (!prayerData) return;
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('city-modal');
+        const citySelectionContainer = document.getElementById('city-selection');
+        const cityHeader = document.getElementById('city-header');
+        let prayerData = null;
+        let countdownInterval = null;
+        let displayedDate = new Date();
 
         const prayerNames = { FAJR: 'الفجر', SUNRISE: 'الشروق', DHUHR: 'الظهر', ASR: 'العصر', MAGHRIB: 'المغرب', ISHA: 'العشاء' };
         const elements = {
@@ -182,29 +243,53 @@
             prevDayBtn: document.getElementById('prev-day-btn'),
             currentDateHeader: document.getElementById('current-date-header')
         };
+
+        async function fetchAndParsePrayerData(cityId) {
+            const url = `https://iofahmawi.github.io/salat/${cityId}-2025.csv`;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`Network response was not ok for ${cityId}`);
+                const csvText = await response.text();
+                return new Map(
+                    csvText.trim().split('\n').slice(1).map(line => {
+                        const [date, fajr, sunrise, dhuhr, asr, maghrib, isha] = line.split(',');
+                        return [date, { FAJR: fajr, SUNRISE: sunrise, DHUHR: dhuhr, ASR: asr, MAGHRIB: maghrib, ISHA: isha }];
+                    })
+                );
+            } catch (error) {
+                console.error("Error fetching prayer times:", error);
+                elements.currentDateHeader.textContent = 'فشل تحميل المواقيت. تحقق من اتصال الإنترنت.';
+                return null;
+            }
+        }
         
-        let displayedDate = new Date();
-        let countdownInterval = null;
+        async function initializeCity(cityId, cityName) {
+            cityHeader.innerHTML = `مواقيت الصلاة لمدينة<br>${cityName}`;
+            elements.currentDateHeader.textContent = '... يتم الآن تحميل المواقيت';
+            prayerData = await fetchAndParsePrayerData(cityId);
+            if (prayerData) {
+                displayedDate = new Date();
+                updateUIForDate(displayedDate);
+            }
+        }
 
         function getDateString(date) {
             return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
         }
 
-        function formatTimeForDisplay(timeStr, prayerKey) {
-            if (!timeStr) return '--:--';
-            const isAm = prayerKey === 'FAJR' || prayerKey === 'SUNRISE';
-            const ampm = isAm ? 'ص' : 'م';
-            
+        function formatTimeForDisplay(timeStr) {
+             if (!timeStr) return '--:--';
             let [hour, minute] = timeStr.split(':');
             let h = parseInt(hour, 10);
-            if (!isAm && h > 12) h -= 12; 
-            if (h === 0) h = 12;
-
+            const ampm = h >= 12 ? 'م' : 'ص';
+            h = h % 12 || 12;
             return `${h}:${minute} ${ampm}`;
         }
 
         function updateUIForDate(date) {
             clearInterval(countdownInterval);
+            if (!prayerData) return;
+
             const dateKey = getDateString(date);
             const dayData = prayerData.get(dateKey);
 
@@ -213,12 +298,11 @@
             Object.keys(prayerNames).forEach(key => {
                 const element = elements[`${key.toLowerCase()}Time`];
                 if (element) {
-                    element.textContent = dayData ? formatTimeForDisplay(dayData[key], key) : '--:--';
+                    element.textContent = dayData && dayData[key] ? formatTimeForDisplay(dayData[key]) : '--:--';
                 }
             });
 
             const isToday = (new Date()).toDateString() === date.toDateString();
-            
             elements.countdownContainer.style.visibility = isToday ? 'visible' : 'hidden';
             document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('active'));
 
@@ -226,16 +310,21 @@
                 startCountdown();
                 countdownInterval = setInterval(startCountdown, 1000);
             }
-            
+
             updateNavigation(date);
         }
 
         function updateNavigation(date) {
+            if (!prayerData || prayerData.size === 0) {
+                elements.prevDayBtn.disabled = true;
+                elements.nextDayBtn.disabled = true;
+                return;
+            }
             const dateArray = Array.from(prayerData.keys());
             const firstDate = new Date(dateArray[0]); firstDate.setHours(0,0,0,0);
             const lastDate = new Date(dateArray[dateArray.length - 1]); lastDate.setHours(0, 0, 0, 0);
             const currentDay = new Date(date); currentDay.setHours(0, 0, 0, 0);
-            
+
             elements.prevDayBtn.disabled = currentDay <= firstDate;
             elements.nextDayBtn.disabled = currentDay >= lastDate;
         }
@@ -251,38 +340,37 @@
                 const time = dayData[name];
                 if (!time) return null;
                 const [h, m] = time.split(':');
-                
-                let hour24 = parseInt(h, 10);
-                const isAm = name === 'FAJR' || name === 'SUNRISE';
-                if (!isAm && hour24 < 12) {
-                    hour24 += 12;
-                }
-                
-                return { name, nameAr: prayerNames[name], card: elements[`${name.toLowerCase()}Card`], date: new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour24, m) };
+                return { name, nameAr: prayerNames[name], card: elements[`${name.toLowerCase()}Card`], date: new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m) };
             }).filter(Boolean);
 
             let currentPrayer = null, nextPrayer = null;
             for (const prayer of prayerTimesToday) {
-                if (now >= prayer.date) {
-                    currentPrayer = prayer;
-                }
-                if (now < prayer.date && !nextPrayer) {
-                    nextPrayer = prayer;
+                if (now >= prayer.date) currentPrayer = prayer;
+                if (now < prayer.date && !nextPrayer) nextPrayer = prayer;
+            }
+            
+            if (!nextPrayer) {
+                const tomorrow = new Date(now);
+                tomorrow.setDate(now.getDate() + 1);
+                const tomorrowDateKey = getDateString(tomorrow);
+                const tomorrowData = prayerData.get(tomorrowDateKey);
+                if (tomorrowData && tomorrowData.FAJR) {
+                    const [h, m] = tomorrowData.FAJR.split(':');
+                    nextPrayer = { name: 'FAJR', nameAr: prayerNames['FAJR'], card: elements['fajrCard'], date: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), h, m) };
                 }
             }
 
             let prayerToHighlight = null;
-            if (!currentPrayer && nextPrayer) {
-                prayerToHighlight = nextPrayer;
-            } else if (currentPrayer && nextPrayer) {
-                const timeSinceCurrentPrayer = now - currentPrayer.date;
-                if (timeSinceCurrentPrayer < gracePeriod) {
-                    prayerToHighlight = currentPrayer;
-                } else {
-                    prayerToHighlight = nextPrayer;
-                }
-            } else if (currentPrayer && !nextPrayer) {
+            if (currentPrayer && (now - currentPrayer.date < gracePeriod)) {
                 prayerToHighlight = currentPrayer;
+            } else if (nextPrayer) {
+                if (getDateString(nextPrayer.date) === dateKey) {
+                    prayerToHighlight = nextPrayer;
+                } else {
+                    prayerToHighlight = currentPrayer;
+                }
+            } else {
+                 prayerToHighlight = currentPrayer;
             }
 
             document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('active'));
@@ -298,27 +386,55 @@
                 elements.timer.textContent = 'تقبل الله';
             }
         }
-        
+
         function getCountdownString(diff) {
+            if (diff < 0) return '00:00:00';
             const h = Math.floor(diff / 3600000);
             const m = Math.floor((diff % 3600000) / 60000);
             const s = Math.floor((diff % 60000) / 1000);
             return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         }
 
+        // --- Event Listeners ---
+        citySelectionContainer.addEventListener('click', (e) => {
+            const button = e.target.closest('.city-btn');
+            if (button) {
+                const cityId = button.dataset.city;
+                const cityName = button.dataset.name;
+                localStorage.setItem('selectedCityId', cityId);
+                localStorage.setItem('selectedCityName', cityName);
+                modal.style.display = 'none';
+                initializeCity(cityId, cityName);
+            }
+        });
+
+        cityHeader.addEventListener('click', () => {
+            modal.style.display = 'flex';
+        });
+        
         elements.nextDayBtn.addEventListener('click', () => {
+            if (!prayerData) return;
             displayedDate.setDate(displayedDate.getDate() + 1);
             updateUIForDate(displayedDate);
         });
         elements.prevDayBtn.addEventListener('click', () => {
+            if (!prayerData) return;
             displayedDate.setDate(displayedDate.getDate() - 1);
             updateUIForDate(displayedDate);
         });
 
-        updateUIForDate(displayedDate);
+        // --- Initial Load ---
+        const savedCityId = localStorage.getItem('selectedCityId');
+        const savedCityName = localStorage.getItem('selectedCityName');
+
+        if (savedCityId && savedCityName) {
+            initializeCity(savedCityId, savedCityName);
+        } else {
+            modal.style.display = 'flex';
+        }
     });
     </script>
-    
+
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -332,6 +448,6 @@
             });
         }
     </script>
-    
+
 </body>
 </html>
