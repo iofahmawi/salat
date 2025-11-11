@@ -23,6 +23,8 @@
             <div id="city-selection" class="city-selection-grid">
                 <button class="city-btn" data-city="amman" data-name="عمّان">عمّان</button>
                 <button class="city-btn" data-city="zarqa" data-name="الزرقاء">الزرقاء</button>
+                <button class="city-btn" data-city="balqa" data-name="البلقاء">البلقاء</button>
+                <button class="city-btn" data-city="Madaba" data-name="مادبا">مادبا</button>
                 <button class="city-btn" data-city="irbid" data-name="إربد">إربد</button>
                 <button class="city-btn" data-city="mafraq" data-name="المفرق">المفرق</button>
                 <button class="city-btn" data-city="ajloun" data-name="عجلون">عجلون</button>
@@ -67,7 +69,6 @@
         let countdownInterval = null;
         let displayedDate = new Date();
 
-        // --- تم إصلاح الخطأ المطبعي هنا ---
         const prayerNames = { FAJR: 'الفجر', SUNRISE: 'الشروق', DHUHR: 'الظهر', ASR: 'العصر', MAGHRIB: 'المغرب', ISHA: 'العشاء' };
 
         const elements = {
@@ -91,7 +92,6 @@
                 const csvText = await response.text();
                 return new Map(
                     csvText.trim().split('\n').slice(1).map(line => {
-                        // --- وتم إصلاح الخطأ المطبعي هنا أيضاً ---
                         const [date, fajr, sunrise, dhuhr, asr, maghrib, isha] = line.split(',');
                         return [date, { FAJR: fajr, SUNRISE: sunrise, DHUHR: dhuhr, ASR: asr, MAGHRIB: maghrib, ISHA: isha }];
                     })
