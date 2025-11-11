@@ -1,17 +1,15 @@
-const CACHE_NAME = 'prayer-times-cache-v11'; // <-- 1. تم تغيير رقم الإصدار
+const CACHE_NAME = 'prayer-times-cache-v12'; // <-- 1. تم تغيير رقم الإصدار
 const urlsToCache = [
   '/',
   'index.html',
   'manifest.json',
   'icon-1024.png',
   'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap',
-  // --- 2. تمت إضافة جميع ملفات البيانات ---
   'https://iofahmawi.github.io/salat/amman-2025.csv',
   'https://iofahmawi.github.io/salat/zarqa-2025.csv',
-  // --- 3. الملفات الجديدة التي تمت إضافتها ---
   'https://iofahmawi.github.io/salat/balqa-2025.csv',
-  'https://iofahmawi.github.io/salat/Madaba-2025.csv',
-  // --- باقي الملفات ---
+  // --- vvvvvvvvv  التعديل هنا  vvvvvvvvv ---
+  'https://iofahmawi.github.io/salat/madaba-2025.csv',
   'https://iofahmawi.github.io/salat/irbid-2025.csv',
   'https://iofahmawi.github.io/salat/mafraq-2025.csv',
   'https://iofahmawi.github.io/salat/ajloun-2025.csv',
