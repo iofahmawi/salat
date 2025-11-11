@@ -213,8 +213,10 @@
         citySelectionContainer.addEventListener('click',e=>{const t=e.target.closest('.city-btn');if(t){const e=t.dataset.city,n=t.dataset.name;localStorage.setItem('selectedCityId',e),localStorage.setItem('selectedCityName',n),modal.style.display='none',initializeCity(e,n)}}),cityHeader.addEventListener('click',()=>{modal.style.display='flex'}),elements.nextDayBtn.addEventListener('click',()=>{if(!prayerData)return;displayedDate.setDate(displayedDate.getDate()+1),updateUIForDate(displayedDate)}),elements.prevDayBtn.addEventListener('click',()=>{if(!prayerData)return;displayedDate.setDate(displayedDate.getDate()-1),updateUIForDate(displayedDate)});const savedCityId=localStorage.getItem('selectedCityId'),savedCityName=localStorage.getItem('selectedCityName');savedCityId&&savedCityName?initializeCity(savedCityId,savedCityName):modal.style.display='flex'
     });
     </script>
+
     <script>
         if('serviceWorker'in navigator)window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').then(e=>{console.log('ServiceWorker registration successful with scope: ',e.scope)}).catch(e=>{console.log('ServiceWorker registration failed: ',e)})})
     </script>
+
 </body>
 </html>
