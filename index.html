@@ -24,7 +24,6 @@
                 <button class="city-btn" data-city="amman" data-name="عمّان">عمّان</button>
                 <button class="city-btn" data-city="zarqa" data-name="الزرقاء">الزرقاء</button>
                 <button class="city-btn" data-city="balqa" data-name="البلقاء">البلقاء</button>
-                <!--  vvvvvvvvv  التعديل هنا  vvvvvvvvv  -->
                 <button class="city-btn" data-city="madaba" data-name="مادبا">مادبا</button>
                 <button class="city-btn" data-city="irbid" data-name="إربد">إربد</button>
                 <button class="city-btn" data-city="mafraq" data-name="المفرق">المفرق</button>
@@ -201,13 +200,18 @@
             if (prayerToHighlight && prayerToHighlight.card) {
                 prayerToHighlight.card.classList.add('active');
             }
-            if (nextPrayer) {
+
+            // vvvvvvvvv  التعديل هنا  vvvvvvvvv
+            if (nextPrayer && getDateString(nextPrayer.date) === dateKey) {
                 elements.nextPrayerName.textContent = `متبقي على أذان ${nextPrayer.nameAr}`;
                 elements.timer.textContent = getCountdownString(nextPrayer.date - now);
+                elements.timer.style.fontSize = '1.9rem'; // إعادة حجم الخط الأصلي للعداد
             } else {
                 elements.nextPrayerName.textContent = 'انتهت صلوات اليوم';
                 elements.timer.textContent = 'تقبل الله';
+                elements.timer.style.fontSize = '1.4rem'; // تصغير حجم الخط لعبارة "تقبل الله"
             }
+            // ^^^^^^^^^  التعديل هنا  ^^^^^^^^^
         }
         function getCountdownString(diff){if(diff<0)return"00:00:00";const h=Math.floor(diff/36e5),m=Math.floor(diff%36e5/6e4),s=Math.floor(diff%6e4/1e3);return`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`}
         citySelectionContainer.addEventListener('click',e=>{const t=e.target.closest('.city-btn');if(t){const e=t.dataset.city,n=t.dataset.name;localStorage.setItem('selectedCityId',e),localStorage.setItem('selectedCityName',n),modal.style.display='none',initializeCity(e,n)}}),cityHeader.addEventListener('click',()=>{modal.style.display='flex'}),elements.nextDayBtn.addEventListener('click',()=>{if(!prayerData)return;displayedDate.setDate(displayedDate.getDate()+1),updateUIForDate(displayedDate)}),elements.prevDayBtn.addEventListener('click',()=>{if(!prayerData)return;displayedDate.setDate(displayedDate.getDate()-1),updateUIForDate(displayedDate)});const savedCityId=localStorage.getItem('selectedCityId'),savedCityName=localStorage.getItem('selectedCityName');savedCityId&&savedCityName?initializeCity(savedCityId,savedCityName):modal.style.display='flex'
