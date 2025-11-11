@@ -83,7 +83,7 @@
             currentDateHeader: document.getElementById('current-date-header')
         };
         async function fetchAndParsePrayerData(cityId) {
-            const url = `https://iofahmawi.github.io/salat/${cityId}-2025.csv`;
+            const url = `https://iofahmawi.github.io/salat/governorates/${cityId}-2025.csv`;
             try {
                 const response = await fetch(url);
                 if (!response.ok) throw new Error(`Network response was not ok for ${cityId}`);
