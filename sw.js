@@ -2,26 +2,26 @@
 
 // 1. قم بزيادة رقم الإصدار. هذا أمر ضروري لتفعيل التغييرات.
 
-const CACHE_NAME = 'prayer-times-cache-v14'; // <-- 1. تم تغيير رقم الإصدار
+const CACHE_NAME = 'prayer-times-cache-v15'; // <-- 1. تم تغيير رقم الإصدار
 const urlsToCache = [
   '/',
   'index.html',
   'manifest.json',
   'icon-1024.png',
   'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap',
-  'https://iofahmawi.github.io/salat/amman-2025.csv',
-  'https://iofahmawi.github.io/salat/zarqa-2025.csv',
-  'https://iofahmawi.github.io/salat/balqa-2025.csv',
+  'https://iofahmawi.github.io/salat/governorates/amman-2025.csv',
+  'https://iofahmawi.github.io/salat/governorates/zarqa-2025.csv',
+  'https://iofahmawi.github.io/salat/governorates/balqa-2025.csv',
   // --- vvvvvvvvv  التعديل هنا  vvvvvvvvv ---
-  'https://iofahmawi.github.io/salat/madaba-2025.csv',
-  'https://iofahmawi.github.io/salat/irbid-2025.csv',
-  'https://iofahmawi.github.io/salat/mafraq-2025.csv',
-  'https://iofahmawi.github.io/salat/ajloun-2025.csv',
-  'https://iofahmawi.github.io/salat/jerash-2025.csv',
-  'https://iofahmawi.github.io/salat/karak-2025.csv',
-  'https://iofahmawi.github.io/salat/tafilah-2025.csv',
-  'https://iofahmawi.github.io/salat/ma\'an-2025.csv',
-  'https://iofahmawi.github.io/salat/aqaba-2025.csv'
+  'https://iofahmawi.github.io/salat/governorates/madaba-2025.csv',
+  'https://iofahmawi.github.io/salat/governorates/irbid-2025.csv',
+  'https://iofahmawi.github.io/salat/governorates/mafraq-2025.csv',
+  'https://iofahmawi.github.io/salat/governorates/ajloun-2025.csv',
+  'https://iofahmawi.github.io/salat/governorates/jerash-2025.csv',
+  'https://iofahmawi.github.io/salat/governorates/karak-2025.csv',
+  'https://iofahmawi.github.io/salat/governorates/tafilah-2025.csv',
+  'https://iofahmawi.github.io/salat/governorates/ma\'an-2025.csv',
+  'https://iofahmawi.github.io/salat/governorates/aqaba-2025.csv'
 ];
 
 self.addEventListener('install', event => {
