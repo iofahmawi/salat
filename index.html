@@ -24,7 +24,8 @@
                 <button class="city-btn" data-city="amman" data-name="عمّان">عمّان</button>
                 <button class="city-btn" data-city="zarqa" data-name="الزرقاء">الزرقاء</button>
                 <button class="city-btn" data-city="balqa" data-name="البلقاء">البلقاء</button>
-                <button class="city-btn" data-city="Madaba" data-name="مادبا">مادبا</button>
+                <!--  vvvvvvvvv  التعديل هنا  vvvvvvvvv  -->
+                <button class="city-btn" data-city="madaba" data-name="مادبا">مادبا</button>
                 <button class="city-btn" data-city="irbid" data-name="إربد">إربد</button>
                 <button class="city-btn" data-city="mafraq" data-name="المفرق">المفرق</button>
                 <button class="city-btn" data-city="ajloun" data-name="عجلون">عجلون</button>
@@ -68,9 +69,7 @@
         let prayerData = null;
         let countdownInterval = null;
         let displayedDate = new Date();
-
         const prayerNames = { FAJR: 'الفجر', SUNRISE: 'الشروق', DHUHR: 'الظهر', ASR: 'العصر', MAGHRIB: 'المغرب', ISHA: 'العشاء' };
-
         const elements = {
             fajrTime: document.getElementById('fajr-time'), sunriseTime: document.getElementById('sunrise-time'),
             dhuhrTime: document.getElementById('dhuhr-time'), asrTime: document.getElementById('asr-time'),
@@ -83,7 +82,6 @@
             prevDayBtn: document.getElementById('prev-day-btn'),
             currentDateHeader: document.getElementById('current-date-header')
         };
-
         async function fetchAndParsePrayerData(cityId) {
             const url = `https://iofahmawi.github.io/salat/${cityId}-2025.csv`;
             try {
@@ -102,7 +100,6 @@
                 return null;
             }
         }
-
         async function initializeCity(cityId, cityName) {
             cityHeader.innerHTML = `مواقيت الصلاة لمحافظة<br>${cityName}`;
             elements.currentDateHeader.textContent = '... يتم الآن تحميل المواقيت';
@@ -112,42 +109,33 @@
                 updateUIForDate(displayedDate);
             }
         }
-
         function getDateString(date) {
             return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
         }
-
         function formatTimeForDisplay(timeStr, prayerKey) {
             if (!timeStr || !timeStr.includes(':')) return '--:--';
-
             let ampm = (prayerKey === 'FAJR' || prayerKey === 'SUNRISE') ? 'ص' : 'م';
-
             let [hour, minute] = timeStr.split(':');
             let h = parseInt(hour, 10);
             h = h % 12 || 12;
-
             return `${h}:${minute} ${ampm}`;
         }
-
         function updateUIForDate(date) {
             clearInterval(countdownInterval);
             if (!prayerData) return;
             const dateKey = getDateString(date);
             const dayData = prayerData.get(dateKey);
-
             const weekday = date.toLocaleDateString('ar-EG', { weekday: 'long' });
             const day = date.getDate();
             const month = date.toLocaleDateString('ar-EG', { month: 'long' });
             const year = date.getFullYear();
             elements.currentDateHeader.textContent = `${weekday}، ${day} ${month} ${year}`;
-
             Object.keys(prayerNames).forEach(key => {
                 const element = elements[`${key.toLowerCase()}Time`];
                 if (element) {
                     element.textContent = dayData && dayData[key] ? formatTimeForDisplay(dayData[key], key) : '--:--';
                 }
             });
-
             const isToday = (new Date()).toDateString() === date.toDateString();
             elements.countdownContainer.style.visibility = isToday ? 'visible' : 'hidden';
             document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('active'));
@@ -157,7 +145,6 @@
             }
             updateNavigation(date);
         }
-
         function updateNavigation(date) {
             if (!prayerData || prayerData.size === 0) {
                 elements.prevDayBtn.disabled = true;
@@ -171,7 +158,6 @@
             elements.prevDayBtn.disabled = currentDay <= firstDate;
             elements.nextDayBtn.disabled = currentDay >= lastDate;
         }
-
         function startCountdown() {
             const now = new Date();
             const gracePeriod = 30 * 60 * 1000;
