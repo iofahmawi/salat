@@ -1,4 +1,8 @@
-const CACHE_NAME = 'prayer-times-cache-v12'; // <-- 1. تم تغيير رقم الإصدار
+// sw.js
+
+// 1. قم بزيادة رقم الإصدار. هذا أمر ضروري لتفعيل التغييرات.
+
+const CACHE_NAME = 'prayer-times-cache-v13'; // <-- 1. تم تغيير رقم الإصدار
 const urlsToCache = [
   '/',
   'index.html',
