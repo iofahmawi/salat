@@ -28,6 +28,9 @@
                 <button class="city-btn" data-city="ajloun" data-name="عجلون">عجلون</button>
                 <button class="city-btn" data-city="jerash" data-name="جرش">جرش</button>
                 <button class="city-btn" data-city="karak" data-name="الكرك">الكرك</button>
+                <button class="city-btn" data-city="tafilah" data-name="الطفيلة">الطفيلة</button>
+                <button class="city-btn" data-city="ma'an" data-name="معان">معان</button>
+                <button class="city-btn" data-city="aqaba" data-name="العقبة">العقبة</button>
             </div>
         </div>
     </div>
@@ -66,7 +69,7 @@
 
         // --- تم إصلاح الخطأ المطبعي هنا ---
         const prayerNames = { FAJR: 'الفجر', SUNRISE: 'الشروق', DHUHR: 'الظهر', ASR: 'العصر', MAGHRIB: 'المغرب', ISHA: 'العشاء' };
-        
+
         const elements = {
             fajrTime: document.getElementById('fajr-time'), sunriseTime: document.getElementById('sunrise-time'),
             dhuhrTime: document.getElementById('dhuhr-time'), asrTime: document.getElementById('asr-time'),
@@ -99,7 +102,7 @@
                 return null;
             }
         }
-        
+
         async function initializeCity(cityId, cityName) {
             cityHeader.innerHTML = `مواقيت الصلاة لمحافظة<br>${cityName}`;
             elements.currentDateHeader.textContent = '... يتم الآن تحميل المواقيت';
@@ -116,13 +119,13 @@
 
         function formatTimeForDisplay(timeStr, prayerKey) {
             if (!timeStr || !timeStr.includes(':')) return '--:--';
-            
+
             let ampm = (prayerKey === 'FAJR' || prayerKey === 'SUNRISE') ? 'ص' : 'م';
 
             let [hour, minute] = timeStr.split(':');
             let h = parseInt(hour, 10);
             h = h % 12 || 12;
-            
+
             return `${h}:${minute} ${ampm}`;
         }
 
@@ -137,7 +140,7 @@
             const month = date.toLocaleDateString('ar-EG', { month: 'long' });
             const year = date.getFullYear();
             elements.currentDateHeader.textContent = `${weekday}، ${day} ${month} ${year}`;
-            
+
             Object.keys(prayerNames).forEach(key => {
                 const element = elements[`${key.toLowerCase()}Time`];
                 if (element) {
