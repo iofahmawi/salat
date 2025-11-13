@@ -24,6 +24,7 @@
                 <button class="city-btn" data-city="amman" data-name="عمّان">عمّان</button>
                 <button class="city-btn" data-city="zarqa" data-name="الزرقاء">الزرقاء</button>
                 <button class="city-btn" data-city="balqa" data-name="البلقاء">البلقاء</button>
+                <!--  vvvvvvvvv  التعديل هنا  vvvvvvvvv  -->
                 <button class="city-btn" data-city="madaba" data-name="مادبا">مادبا</button>
                 <button class="city-btn" data-city="irbid" data-name="إربد">إربد</button>
                 <button class="city-btn" data-city="mafraq" data-name="المفرق">المفرق</button>
@@ -81,8 +82,6 @@
             prevDayBtn: document.getElementById('prev-day-btn'),
             currentDateHeader: document.getElementById('current-date-header')
         };
-
-        // -----  vvvvvvv التعديل الأول: تحسين معالجة الأخطاء  vvvvvvv -----
         async function fetchAndParsePrayerData(cityId) {
             const url = `https://iofahmawi.github.io/salat/governorates/${cityId}-2025.csv`;
             try {
@@ -97,31 +96,11 @@
                 );
             } catch (error) {
                 console.error("Error fetching prayer times:", error);
-                //  التحقق الذكي من سبب الخطأ
-                if (!navigator.onLine) {
-                    // إذا كان المستخدم غير متصل، فهذا يعني أن الملف غير موجود في الذاكرة المؤقتة
-                    elements.currentDateHeader.textContent = 'أنت غير متصل بالإنترنت، ويبدو أن بيانات المواقيت قد حُذفت. يرجى الاتصال بالإنترنت لمرة واحدة لإعادة تحميلها.';
-                } else {
-                    // إذا كان المستخدم متصلاً، فالمشكلة من الشبكة أو الخادم
-                    elements.currentDateHeader.textContent = 'فشل تحميل المواقيت. تحقق من اتصال الإنترنت.';
-                }
+                elements.currentDateHeader.textContent = 'فشل تحميل المواقيت. تحقق من اتصال الإنترنت.';
                 return null;
             }
         }
-        // -----  ^^^^^^^ انتهى التعديل الأول ^^^^^^^ -----
-
-
-        // -----  vvvvvvv التعديل الثاني: طلب مساحة تخزين دائمة  vvvvvvv -----
         async function initializeCity(cityId, cityName) {
-            // طلب التخزين الدائم لمنع النظام من حذف البيانات
-            if (navigator.storage && navigator.storage.persist) {
-                const isPersisted = await navigator.storage.persisted();
-                if (!isPersisted) {
-                    const result = await navigator.storage.persist();
-                    console.log(`Storage persistence request result: ${result}`);
-                }
-            }
-
             cityHeader.innerHTML = `مواقيت الصلاة لمحافظة<br>${cityName}`;
             elements.currentDateHeader.textContent = '... يتم الآن تحميل المواقيت';
             prayerData = await fetchAndParsePrayerData(cityId);
@@ -130,8 +109,6 @@
                 updateUIForDate(displayedDate);
             }
         }
-        // -----  ^^^^^^^ انتهى التعديل الثاني ^^^^^^^ -----
-
         function getDateString(date) {
             return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
         }
@@ -224,14 +201,12 @@
             if (prayerToHighlight && prayerToHighlight.card) {
                 prayerToHighlight.card.classList.add('active');
             }
-            if (nextPrayer && getDateString(nextPrayer.date) === dateKey) {
+            if (nextPrayer) {
                 elements.nextPrayerName.textContent = `متبقي على أذان ${nextPrayer.nameAr}`;
                 elements.timer.textContent = getCountdownString(nextPrayer.date - now);
-                elements.timer.style.fontSize = '1.9rem';
             } else {
                 elements.nextPrayerName.textContent = 'انتهت صلوات اليوم';
                 elements.timer.textContent = 'تقبل الله';
-                elements.timer.style.fontSize = '1.4rem';
             }
         }
         function getCountdownString(diff){if(diff<0)return"00:00:00";const h=Math.floor(diff/36e5),m=Math.floor(diff%36e5/6e4),s=Math.floor(diff%6e4/1e3);return`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`}
