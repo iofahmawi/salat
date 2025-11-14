@@ -163,17 +163,25 @@
         }
 
         /**
-         * دالة جديدة لاختيار الصيغة الصحيحة للكلمة (مفرد/جمع)
+         * دالة مطورة لاختيار الصيغة الصحيحة للكلمة والنص بناءً على العدد
          * @param {number} number العدد
-         * @param {string} singular صيغة المفرد (تستخدم للأعداد 1، 2، ومن 11 فما فوق)
-         * @param {string} plural صيغة الجمع (تستخدم للأعداد من 3 إلى 10)
-         * @returns {string} الكلمة بالصيغة الصحيحة
+         * @param {string} singular صيغة المفرد (ساعة)
+         * @param {string} dual صيغة المثنى (ساعتين)
+         * @param {string} plural صيغة الجمع (ساعات)
+         * @returns {string} النص الكامل (مثال: "ساعة" أو "ساعتين" أو "5 ساعات")
          */
-        function getPluralizedString(number, singular, plural) {
-            if (number >= 3 && number <= 10) {
-                return plural;
+        function getPluralizedString(number, singular, dual, plural) {
+            if (number === 1) {
+                return singular; // بدون رقم
             }
-            return singular;
+            if (number === 2) {
+                return dual; // بدون رقم
+            }
+            if (number >= 3 && number <= 10) {
+                return `<span class="countdown-number">${number}</span> ${plural}`;
+            }
+            // للأعداد 11 فما فوق، وأيضاً للصفر
+            return `<span class="countdown-number">${number}</span> ${singular}`;
         }
         
         function startCountdown(date) {
@@ -250,16 +258,17 @@
                     // --- بداية الجزء الذي تم تعديله ---
                     let countdownHTML = '';
                     if (hours > 0) {
-                        const hourText = getPluralizedString(hours, 'ساعة', 'ساعات');
-                        const minuteText = getPluralizedString(minutes, 'دقيقة', 'دقائق');
-                        countdownHTML = `<span class="countdown-number">${hours}</span> ${hourText} و <span class="countdown-number">${minutes}</span> ${minuteText}`;
+                        const hourText = getPluralizedString(hours, 'ساعة', 'ساعتين', 'ساعات');
+                        const minuteText = getPluralizedString(minutes, 'دقيقة', 'دقيقتين', 'دقائق');
+                        // نعرض الدقائق فقط إذا كانت لا تساوي صفر أو إذا كانت الساعات تساوي صفر
+                        countdownHTML = (minutes > 0) ? `${hourText} و ${minuteText}` : hourText;
                     } else if (minutes > 0) {
-                        const minuteText = getPluralizedString(minutes, 'دقيقة', 'دقائق');
-                        const secondText = getPluralizedString(seconds, 'ثانية', 'ثواني');
-                        countdownHTML = `<span class="countdown-number">${minutes}</span> ${minuteText} و <span class="countdown-number">${seconds}</span> ${secondText}`;
+                        const minuteText = getPluralizedString(minutes, 'دقيقة', 'دقيقتين', 'دقائق');
+                        const secondText = getPluralizedString(seconds, 'ثانية', 'ثانيتين', 'ثواني');
+                         // نعرض الثواني فقط إذا كانت لا تساوي صفر
+                        countdownHTML = (seconds > 0) ? `${minuteText} و ${secondText}` : minuteText;
                     } else {
-                        const secondText = getPluralizedString(seconds, 'ثانية', 'ثواني');
-                        countdownHTML = `<span class="countdown-number">${seconds}</span> ${secondText}`;
+                        countdownHTML = getPluralizedString(seconds, 'ثانية', 'ثانيتين', 'ثواني');
                     }
                     elements.countdownTimer.innerHTML = countdownHTML;
                     // --- نهاية الجزء الذي تم تعديله ---
