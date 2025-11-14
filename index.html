@@ -87,7 +87,6 @@
             countdownTimer: document.getElementById('countdown-timer')
         };
 
-        // *** FIX: Restored the stable, working version of this function ***
         async function fetchAndParsePrayerData(cityId) {
             const url = `https://iofahmawi.github.io/salat/governorates/${cityId}-2025.csv`;
             try {
@@ -146,13 +145,13 @@
 
                 if (element && timeStr) {
                     const { hours, minutes } = parseTimeTo24Hour(timeStr, key);
-                    
                     let displayHours = hours % 12;
-                    if (displayHours === 0) {
-                        displayHours = 12;
-                    }
+                    if (displayHours === 0) { displayHours = 12; }
 
-                    element.textContent = `${displayHours}:${String(minutes).padStart(2, '0')}`;
+                    // *** التعديل الأخير: طباعة "ص" أو "م" للعرض فقط ***
+                    const period = (key === 'FAJR' || key === 'SUNRISE') ? 'ص' : 'م';
+                    
+                    element.textContent = `${displayHours}:${String(minutes).padStart(2, '0')} ${period}`;
 
                 } else if (element) {
                     element.textContent = '--:--';
