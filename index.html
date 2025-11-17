@@ -12,16 +12,26 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root{--bg-color:#0D1B2A;--card-color:#1B263B;--text-color:#E0E1DD;--primary-color:#E1C56E;--disabled-color:#4A5568}html,body{height:100%;margin:0;overflow:hidden}body{font-family:'Cairo',sans-serif;background-color:var(--bg-color);color:var(--text-color);padding:15px;box-sizing:border-box;display:flex;justify-content:center}.container{width:100%;max-width:800px;height:100%;text-align:center;display:flex;flex-direction:column;padding-top:7.5px;padding-bottom:30px;box-sizing:border-box}header{flex-shrink:0}header h1{font-size:1.8rem;margin-bottom:5px;line-height:1.7;cursor:pointer;-webkit-tap-highlight-color:transparent}#current-date-header{color:var(--primary-color);font-size:1rem;margin:0 0 1.5rem 0;min-height:1.2em}.prayer-times-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;flex-shrink:0}.prayer-card{background-color:var(--card-color);padding:15px;border-radius:8px;border:2px solid transparent;transition:border-color .3s,box-shadow .3s}.prayer-card h2{margin:0 0 8px;font-size:1rem;color:var(--primary-color);font-weight:600}
+        :root{--bg-color:#0D1B2A;--card-color:#1B263B;--text-color:#E0E1DD;--primary-color:#E1C56E;--disabled-color:#4A5568}html,body{height:100%;margin:0;overflow:hidden}body{font-family:'Cairo',sans-serif;background-color:var(--bg-color);color:var(--text-color);padding:15px;box-sizing:border-box;display:flex;justify-content:center}.container{width:100%;max-width:800px;height:100%;text-align:center;display:flex;flex-direction:column;padding-top:7.5px;padding-bottom:30px;box-sizing:border-box}header{flex-shrink:0}header h1{font-size:1.8rem;margin-bottom:5px;line-height:1.7;cursor:pointer;-webkit-tap-highlight-color:transparent}#current-date-header{color:var(--primary-color);font-size:1rem;margin:0 0 1.5rem 0;min-height:1.2em; cursor: pointer; -webkit-tap-highlight-color:transparent;}#current-date-header:hover{opacity: 0.8;}.prayer-times-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;flex-shrink:0}.prayer-card{background-color:var(--card-color);padding:15px;border-radius:8px;border:2px solid transparent;transition:border-color .3s,box-shadow .3s}.prayer-card h2{margin:0 0 8px;font-size:1rem;color:var(--primary-color);font-weight:600}
         .prayer-card p{margin:0;font-size:1.45rem;font-weight:bold}
         .next-prayer-highlight { border-color: var(--primary-color); box-shadow: 0 0 8px rgba(225, 197, 110, 0.4); }
         .countdown-card{grid-column:1 / -1; margin-top: 10px; align-content: center; min-height: 80px;}
-        
         .countdown-card p{margin:0;font-size:1.2rem;font-weight:bold; line-height: 1.5;}
-        
         .countdown-number { font-size: 1.55rem; font-weight: bold; color: var(--primary-color); margin: 0 4px; }
         .highlight-prayer-name { color: var(--primary-color); font-weight: bold; }
         .navigation-controls{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:1.5rem}.nav-arrow{background:var(--card-color);border:none;color:var(--primary-color);border-radius:50%;width:50px;height:50px;font-size:2rem;font-weight:bold;cursor:pointer;transition:background-color .3s;display:flex;justify-content:center;align-items:center;padding-bottom:5px;-webkit-tap-highlight-color:transparent}.nav-arrow:hover:not(:disabled){background-color:#2a3b52}.nav-arrow:disabled{color:var(--disabled-color);background-color:var(--card-color);cursor:not-allowed;opacity:.5}.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,.85);display:none;justify-content:center;align-items:center;z-index:1000}.modal-content{background-color:var(--bg-color);border:2px solid var(--card-color);padding:20px;border-radius:10px;text-align:center;width:90%;max-width:320px}.modal-content h2{margin-top:0;margin-bottom:20px;font-size:1.5rem;color:var(--primary-color)}.city-selection-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.city-btn{background-color:var(--card-color);color:var(--text-color);border:1px solid var(--card-color);border-radius:8px;font-family:'Cairo',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;transition:background-color .3s,border-color .3s;-webkit-tap-highlight-color:transparent;aspect-ratio:1/1;padding:5px;display:flex;justify-content:center;align-items:center;text-align:center}.city-btn:hover{background-color:#2a3b52;border-color:var(--primary-color)}
+        #date-input-container{display:flex;gap:10px;margin-bottom:10px;justify-content:center;}
+        .date-segment-input{width: 60px; padding: 10px; border-radius: 8px; border: 1px solid var(--primary-color); background-color: var(--card-color); color: var(--text-color); font-family: 'Cairo', sans-serif; font-size: 1.2rem; box-sizing: border-box; text-align: center; transition: border-color 0.3s, box-shadow 0.3s;}
+        #year-input{width: 80px;}
+        /* -- بداية التعديل الجديد -- */
+        .date-segment-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(225, 197, 110, 0.5);
+        }
+        /* -- نهاية التعديل الجديد -- */
+        #go-to-date-btn{background-color:var(--primary-color);color:var(--bg-color);border:none;border-radius:8px;padding:10px 20px;font-family:'Cairo',sans-serif;font-weight:bold;font-size:1rem;cursor:pointer;margin-top:10px;width:100%;}
+        #date-error-msg{color:#ff6b6b;font-size:0.9rem;min-height:1.2em;margin:5px 0 0 0;}
     </style>
 </head>
 <body>
@@ -44,6 +54,20 @@
             </div>
         </div>
     </div>
+    
+    <div id="date-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>أدخل التاريخ</h2>
+            <div id="date-input-container">
+                <input type="number" id="day-input" class="date-segment-input" min="1" max="31">
+                <input type="number" id="month-input" class="date-segment-input" min="1" max="12">
+                <input type="number" id="year-input" class="date-segment-input" min="2025" max="2025">
+            </div>
+            <p id="date-error-msg"></p>
+            <button id="go-to-date-btn">اذهب</button>
+        </div>
+    </div>
+
     <div class="container">
         <header>
             <h1 id="city-header">مواقيت الصلاة</h1>
@@ -69,7 +93,13 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const modal = document.getElementById('city-modal');
+        const cityModal = document.getElementById('city-modal');
+        const dateModal = document.getElementById('date-modal');
+        const dayInput = document.getElementById('day-input');
+        const monthInput = document.getElementById('month-input');
+        const yearInput = document.getElementById('year-input');
+        const goToDateBtn = document.getElementById('go-to-date-btn');
+        const dateErrorMsg = document.getElementById('date-error-msg');
         const citySelectionContainer = document.getElementById('city-selection');
         const cityHeader = document.getElementById('city-header');
         let prayerData = null;
@@ -133,6 +163,11 @@
         function getDateString(date) {
             return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
         }
+        
+        function parseDateString(dateStr) {
+            const [year, month, day] = dateStr.split('-').map(Number);
+            return new Date(year, month - 1, day);
+        }
 
         function updateUIForDate(date) {
             if (!prayerData) return;
@@ -162,25 +197,10 @@
             updateNavigation(date);
         }
 
-        /**
-         * دالة مطورة لاختيار الصيغة الصحيحة للكلمة والنص بناءً على العدد
-         * @param {number} number العدد
-         * @param {string} singular صيغة المفرد (ساعة)
-         * @param {string} dual صيغة المثنى (ساعتين)
-         * @param {string} plural صيغة الجمع (ساعات)
-         * @returns {string} النص الكامل (مثال: "ساعة" أو "ساعتين" أو "5 ساعات")
-         */
         function getPluralizedString(number, singular, dual, plural) {
-            if (number === 1) {
-                return singular; // بدون رقم
-            }
-            if (number === 2) {
-                return dual; // بدون رقم
-            }
-            if (number >= 3 && number <= 10) {
-                return `<span class="countdown-number">${number}</span> ${plural}`;
-            }
-            // للأعداد 11 فما فوق، وأيضاً للصفر
+            if (number === 1) { return singular; }
+            if (number === 2) { return dual; }
+            if (number >= 3 && number <= 10) { return `<span class="countdown-number">${number}</span> ${plural}`; }
             return `<span class="countdown-number">${number}</span> ${singular}`;
         }
         
@@ -224,9 +244,7 @@
                     }
                 }
 
-                if (inAdhanTime) {
-                    return;
-                }
+                if (inAdhanTime) { return; }
 
                 let nextPrayerName = null;
                 let nextPrayerTime = null;
@@ -255,23 +273,19 @@
                     const seconds = Math.floor((diff % 60000) / 1000);
                     elements.countdownTitle.textContent = `متبقي على صلاة ${nextPrayerName}`;
                     
-                    // --- بداية الجزء الذي تم تعديله ---
                     let countdownHTML = '';
                     if (hours > 0) {
                         const hourText = getPluralizedString(hours, 'ساعة', 'ساعتين', 'ساعات');
                         const minuteText = getPluralizedString(minutes, 'دقيقة', 'دقيقتين', 'دقائق');
-                        // نعرض الدقائق فقط إذا كانت لا تساوي صفر أو إذا كانت الساعات تساوي صفر
                         countdownHTML = (minutes > 0) ? `${hourText} و ${minuteText}` : hourText;
                     } else if (minutes > 0) {
                         const minuteText = getPluralizedString(minutes, 'دقيقة', 'دقيقتين', 'دقائق');
                         const secondText = getPluralizedString(seconds, 'ثانية', 'ثانيتين', 'ثواني');
-                         // نعرض الثواني فقط إذا كانت لا تساوي صفر
                         countdownHTML = (seconds > 0) ? `${minuteText} و ${secondText}` : minuteText;
                     } else {
                         countdownHTML = getPluralizedString(seconds, 'ثانية', 'ثانيتين', 'ثواني');
                     }
                     elements.countdownTimer.innerHTML = countdownHTML;
-                    // --- نهاية الجزء الذي تم تعديله ---
                     
                     const cardId = nextPrayerKey.toLowerCase() + '-card';
                     const nextPrayerCard = document.getElementById(cardId);
@@ -292,8 +306,8 @@
                 return;
             }
             const dateArray = Array.from(prayerData.keys());
-            const firstDate = new Date(dateArray[0]); firstDate.setHours(0,0,0,0);
-            const lastDate = new Date(dateArray[dateArray.length - 1]); lastDate.setHours(0, 0, 0, 0);
+            const firstDate = parseDateString(dateArray[0]);
+            const lastDate = parseDateString(dateArray[dateArray.length - 1]);
             const currentDay = new Date(date); currentDay.setHours(0, 0, 0, 0);
             elements.prevDayBtn.disabled = currentDay <= firstDate;
             elements.nextDayBtn.disabled = currentDay >= lastDate;
@@ -306,28 +320,93 @@
                 const cityName = btn.dataset.name;
                 localStorage.setItem('selectedCityId', cityId);
                 localStorage.setItem('selectedCityName', cityName);
-                modal.style.display = 'none';
+                cityModal.style.display = 'none';
                 initializeCity(cityId, cityName);
             }
         });
 
-        cityHeader.addEventListener('click', () => { modal.style.display = 'flex'; });
+        cityHeader.addEventListener('click', () => { cityModal.style.display = 'flex'; });
         elements.nextDayBtn.addEventListener('click', () => { if (!prayerData) return; displayedDate.setDate(displayedDate.getDate() + 1); updateUIForDate(displayedDate); });
         elements.prevDayBtn.addEventListener('click', () => { if (!prayerData) return; displayedDate.setDate(displayedDate.getDate() - 1); updateUIForDate(displayedDate); });
+
+        // ---- بداية الكود الجديد لإدخال التاريخ المقسّم ----
+        elements.currentDateHeader.addEventListener('click', () => {
+            if (!prayerData) return;
+
+            // تعبئة الحقول بتاريخ اليوم المعروض حاليًا
+            const currentDay = displayedDate.getDate();
+            const currentMonth = displayedDate.getMonth() + 1; // getMonth() تبدأ من 0
+            const currentYear = displayedDate.getFullYear();
+
+            dayInput.value = String(currentDay).padStart(2, '0');
+            monthInput.value = String(currentMonth).padStart(2, '0');
+            yearInput.value = currentYear;
+            
+            dateErrorMsg.textContent = '';
+            dateModal.style.display = 'flex';
+            dayInput.select(); // تحديد النص في حقل اليوم لتسهيل التغيير
+        });
+
+        function handleGoToDate() {
+            dateErrorMsg.textContent = '';
+            const day = dayInput.value;
+            const month = monthInput.value;
+            const year = yearInput.value;
+
+            if (!day || !month || !year) {
+                dateErrorMsg.textContent = 'الرجاء تعبئة جميع الحقول.';
+                return;
+            }
+
+            const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+            if (prayerData.has(dateStr)) {
+                const selectedDate = parseDateString(dateStr);
+                displayedDate = selectedDate;
+                updateUIForDate(displayedDate);
+                dateModal.style.display = 'none';
+            } else {
+                dateErrorMsg.textContent = 'التاريخ غير صحيح أو غير متوفر.';
+            }
+        }
+        
+        goToDateBtn.addEventListener('click', handleGoToDate);
+
+        // التنقل التلقائي بين الحقول
+        dayInput.addEventListener('input', () => {
+            if (dayInput.value.length === 2) {
+                monthInput.select();
+            }
+        });
+        monthInput.addEventListener('input', () => {
+            if (monthInput.value.length === 2) {
+                yearInput.select();
+            }
+        });
+        yearInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                handleGoToDate();
+            }
+        });
+
+        dateModal.addEventListener('click', (e) => {
+            if (e.target === dateModal) {
+                dateModal.style.display = 'none';
+            }
+        });
+        // ---- نهاية الكود الجديد ----
 
         const savedCityId = localStorage.getItem('selectedCityId');
         const savedCityName = localStorage.getItem('selectedCityName');
         if (savedCityId && savedCityName) {
             initializeCity(savedCityId, savedCityName);
         } else {
-            modal.style.display = 'flex';
+            cityModal.style.display = 'flex';
         }
     });
     </script>
-
     <script>
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').then(reg => console.log('SW registered.'), err => console.log('SW registration failed: ', err)); }); }
     </script>
-
 </body>
 </html>
