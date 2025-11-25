@@ -1,7 +1,7 @@
 {
   "name": "مواقيت الصلاة",
   "short_name": "مواقيت الصلاة",
-  "description": "موقع لعرض مواقيت الصلاة.",
+  "description": "موقع لعرض مواقيت الصلاة في الأردن.",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
