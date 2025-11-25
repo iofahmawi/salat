@@ -2,7 +2,7 @@
 
 // 1. قم بزيادة رقم الإصدار. هذا أمر ضروري لتفعيل التغييرات.
 
-const CACHE_NAME = 'prayer-times-cache-v18'; // <-- 1. تم تغيير رقم الإصدار
+const CACHE_NAME = 'prayer-times-cache-v19'; // <-- 1. تم تغيير رقم الإصدار
 const urlsToCache = [
   '/',
   'index.html',
