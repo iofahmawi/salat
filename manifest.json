@@ -1,7 +1,7 @@
 {
   "name": "مواقيت الصلاة",
   "short_name": "مواقيت الصلاة",
-  "description": "موقع لعرض مواقيت الصلاة في الأردن.",
+  "description": "موقع لعرض مواقيت الصلاة.",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",
@@ -9,7 +9,10 @@
 
   "background_color": "#0D1B2A",
   "theme_color": "#0D1B2A",
+
   "navigation_bar_color": "#0D1B2A",
+  "navigationBarColor": "#0D1B2A",
+  "nav_bar_color": "#0D1B2A",
 
   "icons": [
     {
@@ -17,5 +20,7 @@
       "sizes": "1024x1024",
       "type": "image/png"
     }
-  ]
+  ],
+
+  "prefer_related_applications": false
 }
