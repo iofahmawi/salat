@@ -1,70 +1,72 @@
-// sw.js
+// sw.js - مواقيت الصلاة (نسخة التخزين الديناميكي المضمونة)
+const CACHE_NAME = 'prayer-times-v20'; // قمت بتغيير الرقم لفرض التحديث
 
-// قم بتحديث رقم الإصدار لضمان تفعيل التعديلات
-const CACHE_NAME = 'prayer-times-dynamic-v16';
-
-// نضع هنا فقط ملفات واجهة التطبيق الأساسية
-// أزلنا ملفات CSV لكي لا يفشل التثبيت إذا تعثر تحميل أحدها
+// سنخزن فقط الصفحة الرئيسية لضمان نجاح التثبيت مهما حدث
 const urlsToCache = [
-  '/',
-  'index.html',
-  'manifest.json',
-  'icon-1024.png',
-  'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap'
+  './',
+  'index.html'
 ];
 
 self.addEventListener('install', event => {
+  self.skipWaiting(); // تفعيل التحديث فوراً دون انتظار
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Opened cache');
+        console.log('Service Worker: Caching critical files');
         return cache.addAll(urlsToCache);
+      })
+      .catch(err => {
+        console.error('Service Worker: Install failed', err);
       })
   );
 });
 
 self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
+          if (cacheName !== CACHE_NAME) {
+            console.log('Service Worker: Clearing old cache');
             return caches.delete(cacheName);
           }
         })
       );
+    }).then(() => {
+      console.log('Service Worker: Activated');
+      return self.clients.claim();
     })
   );
-  // سطر مهم لإجبار المتصفح على استخدام النسخة الجديدة فوراً
-  return self.clients.claim();
 });
 
 self.addEventListener('fetch', event => {
+  // استراتيجية: الشبكة أولاً، ثم الكاش، مع حفظ كل ما يتم تحميله
+  // Network first, falling back to cache, then save network response
+  
   event.respondWith(
-    caches.match(event.request)
-      .then(cachedResponse => {
-        // 1. إذا وجدنا الملف في الكاش، نرجعه فوراً
-        if (cachedResponse) {
-          return cachedResponse;
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.match(event.request).then(response => {
+        // 1. حاول جلبه من الكاش أولاً (لسرعة العرض)
+        if (response) {
+          // حتى لو وجدناه في الكاش، نحاول تحديثه من النت في الخلفية للمرة القادمة
+          // (اختياري، لكن هنا سنعتمد على الكاش الموجود حال عدم وجود نت)
+          return response;
         }
 
-        // 2. إذا لم نجده، نطلبه من الإنترنت
-        return fetch(event.request).then(networkResponse => {
-          // التحقق من صحة الاستجابة
-          if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic' && networkResponse.type !== 'cors') {
+        // 2. إذا لم يكن في الكاش، اطلبه من النت
+        return fetch(event.request)
+          .then(networkResponse => {
+            // خزنه في الكاش للمستقبل
+            if(networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+                 cache.put(event.request, networkResponse.clone());
+            }
             return networkResponse;
-          }
-
-          // 3. نقوم بنسخ الاستجابة وتخزينها في الكاش للمرة القادمة
-          // هذا هو الجزء الذي يحل مشكلتك (التخزين الديناميكي)
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseToCache);
+          })
+          .catch(() => {
+             // هنا وصلنا لطريق مسدود: لا نت ولا كاش
+             // يمكن عرض صفحة بديلة أو رسالة خطأ
           });
-
-          return networkResponse;
-        });
-      })
+      });
+    })
   );
 });
