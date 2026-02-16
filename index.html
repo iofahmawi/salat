@@ -24,6 +24,7 @@
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
             outline: none !important;
+            box-sizing: border-box;
         }
 
         html, body { height: 100%; margin: 0; overflow: hidden; background-color: var(--bg-color); }
@@ -33,7 +34,6 @@
             background: var(--bg-color);
             color: var(--text-color);
             padding: 15px;
-            box-sizing: border-box;
             display: flex;
             justify-content: center;
             user-select: none;
@@ -46,9 +46,8 @@
             text-align: center;
             display: flex;
             flex-direction: column;
-            padding-top: 15px; /* تم تعديلها لتكون 15px كما طلبت */
+            padding-top: 15px; 
             padding-bottom: 10px;
-            box-sizing: border-box;
         }
 
         @media (display-mode: standalone) {
@@ -60,14 +59,13 @@
         .sub-title { 
             font-size: 0.95rem; 
             color: #ffffff; 
-            opacity: 1; 
             margin: 0; 
             font-weight: 400; 
         }
 
         .city-name { 
             font-size: 2.1rem; 
-            margin: 8px 0; 
+            margin: 15px 0; /* المسافة المطلوبة 15px */
             color: var(--primary-color); 
             font-weight: 700; 
             cursor: pointer;
@@ -77,7 +75,7 @@
 
         #current-date-header {
             color: var(--text-color); font-size: 1rem; 
-            margin: 0 0 15px 0; /* تم تعديلها لتكون 15px كما طلبت */
+            margin: 0 0 15px 0; 
             cursor: pointer; min-height: 1.2em; opacity: 0.8;
         }
 
@@ -93,6 +91,7 @@
         .prayer-card h2 { margin: 0 0 8px; font-size: 0.95rem; color: var(--primary-color); font-weight: 600; }
         .prayer-card p { margin: 0; font-size: 1.4rem; font-weight: 700; }
 
+        /* التوهج الأصلي (8px) */
         .next-prayer-highlight { 
             border: 2px solid var(--primary-color) !important; 
             box-shadow: 0 0 8px rgba(225, 197, 110, 0.3) !important; 
@@ -117,12 +116,11 @@
         .nav-arrow:active { transform: scale(0.9); background: var(--primary-color); color: var(--bg-color); }
         .nav-arrow:disabled { opacity: 0.2; cursor: not-allowed; }
 
+        /* التوقيع بالأصفر */
         .footer-signature { 
             margin-top: 15px; font-size: 0.75rem; color: var(--text-color); 
             opacity: 0.8; flex-shrink: 0; text-decoration: none; display: block;
-            transition: opacity 0.3s;
         }
-        .footer-signature:active { opacity: 1; }
         .footer-signature span { color: var(--primary-color); font-weight: 600; font-size: 0.85rem; margin-right: 4px; }
 
         .modal-overlay {
@@ -141,34 +139,21 @@
         .city-btn {
             background: rgba(255, 255, 255, 0.03); color: #fff; border: 1px solid rgba(225, 197, 110, 0.15);
             border-radius: 14px; padding: 12px 5px; cursor: pointer; font-family: 'Cairo';
-            font-size: 0.85rem; font-weight: 600; transition: all 0.2s ease;
-            display: flex; justify-content: center; align-items: center;
+            font-size: 0.85rem; font-weight: 600;
         }
-        .city-btn:active { background: var(--primary-color); color: var(--bg-color); transform: scale(0.92); border-color: var(--primary-color); }
 
         .date-selection-container { display: inline-flex; flex-direction: column; align-items: center; gap: 15px; }
-        .date-input-group { display: flex; gap: 8px; justify-content: center; }
-        .input-field { display: flex; flex-direction: column; align-items: center; gap: 5px; }
-        .input-field label { font-size: 0.7rem; color: var(--primary-color); opacity: 0.9; }
         .date-segment-input { 
             width: 55px; padding: 10px 0; border-radius: 10px; border: 1px solid rgba(225, 197, 110, 0.2); 
-            background: rgba(0, 0, 0, 0.2); color: #fff; text-align: center; font-size: 1rem; 
-            font-family: 'Cairo'; outline: none;
+            background: rgba(0, 0, 0, 0.2); color: #fff; text-align: center; font-family: 'Cairo';
         }
-        #year-input { width: 75px; }
-        #go-to-date-btn { 
-            background: var(--primary-color); color: var(--bg-color); border: none; 
-            padding: 10px 0; width: 100%; border-radius: 10px; font-weight: 700; 
-            cursor: pointer; font-size: 0.95rem; transition: transform 0.1s;
-        }
-        #go-to-date-btn:active { transform: scale(0.97); }
-        #date-error-msg { color: #ff6b6b; font-size: 0.75rem; min-height: 1.2em; margin: 5px 0 0 0; }
+        #go-to-date-btn { background: var(--primary-color); color: var(--bg-color); border: none; padding: 10px 0; width: 100%; border-radius: 10px; font-weight: 700; cursor: pointer; }
     </style>
 </head>
 <body>
     <div id="city-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 340px; width: 90%;">
-            <h2 style="color:var(--primary-color); margin-top:0; font-size: 1.25rem; font-weight: 700;">اختر المحافظة</h2>
+            <h2 style="color:var(--primary-color);">اختر المحافظة</h2>
             <div id="city-selection" class="city-selection-grid">
                 <button class="city-btn" data-city="amman" data-name="عمّان">عمّان</button>
                 <button class="city-btn" data-city="zarqa" data-name="الزرقاء">الزرقاء</button>
@@ -189,18 +174,16 @@
 
     <div id="date-modal" class="modal-overlay">
         <div class="modal-content">
-            <h2 style="color:var(--primary-color); margin-top:0; margin-bottom: 15px; font-size: 1.1rem;">اذهب إلى تاريخ</h2>
+            <h2 style="color:var(--primary-color);">اذهب إلى تاريخ</h2>
             <div class="date-selection-container">
-                <div class="date-input-group">
-                    <div class="input-field"><label>اليوم</label><input type="number" id="day-input" class="date-segment-input" placeholder="00"></div>
-                    <div class="input-field"><label>الشهر</label><input type="number" id="month-input" class="date-segment-input" placeholder="00"></div>
-                    <div class="input-field"><label>السنة</label><input type="number" id="year-input" class="date-segment-input" value="2026"></div>
+                <div style="display: flex; gap: 8px;">
+                    <input type="number" id="day-input" class="date-segment-input" placeholder="يوم">
+                    <input type="number" id="month-input" class="date-segment-input" placeholder="شهر">
+                    <input type="number" id="year-input" class="date-segment-input" value="2026">
                 </div>
-                <div style="width: 100%;">
-                    <button id="go-to-date-btn">تأكيد الانتقال</button>
-                    <p id="date-error-msg"></p>
-                </div>
+                <button id="go-to-date-btn">تأكيد الانتقال</button>
             </div>
+            <p id="date-error-msg" style="color:#ff6b6b; font-size:0.75rem; margin-top:5px;"></p>
             <p onclick="document.getElementById('date-modal').style.display='none'" style="margin-top:10px; font-size:0.8rem; cursor:pointer; opacity:0.5">إلغاء</p>
         </div>
     </div>
@@ -235,11 +218,12 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // تسجيل Service Worker
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('./sw.js')
-                        .then(reg => console.log('Service Worker Registered'))
-                        .catch(err => console.log('Service Worker Registration Failed', err));
+                        .then(reg => console.log('SW Registered'))
+                        .catch(err => console.log('SW Error', err));
                 });
             }
 
@@ -250,7 +234,6 @@
             const yearInput = document.getElementById('year-input');
             const goToDateBtn = document.getElementById('go-to-date-btn');
             const dateErrorMsg = document.getElementById('date-error-msg');
-            const citySelectionContainer = document.getElementById('city-selection');
             const cityHeader = document.getElementById('city-header');
             const closeCityBtn = document.getElementById('close-city-modal');
             
@@ -280,7 +263,8 @@
                 let hT = h > 0 ? formatAr(h, "ساعة", "ساعتان", "ساعات") : "";
                 let mT = m > 0 ? formatAr(m, "دقيقة", "دقيقتان", "دقائق") : "";
                 let sT = (h === 0 && m < 5) ? formatAr(s, "ثانية", "ثانيتان", "ثوانٍ") : "";
-                return `${hT} ${h > 0 && mT != '' ? 'و' : ''} ${mT} ${mT != '' && sT != '' ? 'و' : ''} ${sT}`.trim();
+                let res = `${hT} ${h > 0 && mT != '' ? 'و' : ''} ${mT} ${mT != '' && sT != '' ? 'و' : ''} ${sT}`.trim();
+                return res === "" ? "ثوانٍ معدودة" : res;
             }
 
             async function fetchAndParsePrayerData(cityId) {
@@ -304,8 +288,11 @@
             async function initializeCity(cityId, cityName) {
                 cityHeader.textContent = cityName;
                 prayerData = await fetchAndParsePrayerData(cityId);
-                if (prayerData) { displayedDate = new Date(); updateUIForDate(displayedDate); }
-                closeCityBtn.style.display = 'block';
+                if (prayerData) { 
+                    displayedDate = new Date(); 
+                    updateUIForDate(displayedDate); 
+                    closeCityBtn.style.display = 'block';
+                }
             }
 
             function updateUIForDate(date) {
@@ -314,9 +301,7 @@
                 const dayData = prayerData.get(dateKey);
                 if(!dayData) return;
 
-                elements.currentDateHeader.textContent = date.toLocaleDateString('ar-EG-u-nu-latn', { 
-                    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' 
-                });
+                elements.currentDateHeader.textContent = date.toLocaleDateString('ar-EG-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
                 ['FAJR', 'SUNRISE', 'DHUHR', 'ASR', 'MAGHRIB', 'ISHA'].forEach(key => {
                     const timeStr = dayData[key];
@@ -331,13 +316,12 @@
 
             function startCountdown(date) {
                 if (countdownInterval) clearInterval(countdownInterval);
-                document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('next-prayer-highlight'));
-                const now = new Date();
-                const isToday = date.toDateString() === now.toDateString();
+                const isToday = date.toDateString() === new Date().toDateString();
 
                 if (!isToday) {
                     elements.countdownTitle.textContent = "الوقت المتبقي";
                     elements.countdownTimer.textContent = "غير متوفر";
+                    document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('next-prayer-highlight'));
                     return;
                 }
 
@@ -349,6 +333,7 @@
                     
                     document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('next-prayer-highlight'));
 
+                    // منطق الإمساك
                     const fajrInfo = parseTimeTo24Hour(dayData['FAJR'], 'FAJR');
                     const fajrTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), fajrInfo.hours, fajrInfo.minutes);
                     const imsakTime = new Date(fajrTime.getTime() - (15 * 60000));
@@ -390,7 +375,7 @@
                 elements.nextDayBtn.disabled = current >= new Date(keys[keys.length-1]);
             }
 
-            citySelectionContainer.addEventListener('click', e => {
+            document.getElementById('city-selection').addEventListener('click', e => {
                 const btn = e.target.closest('.city-btn');
                 if (btn) {
                     localStorage.setItem('selectedCityId', btn.dataset.city);
@@ -402,6 +387,7 @@
 
             cityHeader.addEventListener('click', () => cityModal.style.display = 'flex');
             closeCityBtn.addEventListener('click', () => cityModal.style.display = 'none');
+            
             elements.nextDayBtn.addEventListener('click', () => { displayedDate.setDate(displayedDate.getDate() + 1); updateUIForDate(displayedDate); });
             elements.prevDayBtn.addEventListener('click', () => { displayedDate.setDate(displayedDate.getDate() - 1); updateUIForDate(displayedDate); });
             
@@ -409,7 +395,6 @@
                 dayInput.value = displayedDate.getDate(); 
                 monthInput.value = displayedDate.getMonth() + 1; 
                 dateModal.style.display = 'flex'; 
-                dateErrorMsg.textContent = "";
             });
 
             goToDateBtn.addEventListener('click', () => {
@@ -418,7 +403,7 @@
                     displayedDate = new Date(d); 
                     updateUIForDate(displayedDate); 
                     dateModal.style.display = 'none'; 
-                } else dateErrorMsg.textContent = "التاريخ غير متوفر";
+                } else dateErrorMsg.textContent = "غير متوفر";
             });
 
             const savedId = localStorage.getItem('selectedCityId');
