@@ -20,7 +20,6 @@
             --disabled-color: #4A5568;
         }
 
-        /* منع الومضة الزرقاء والتركيز البرتقالي في كل المتصفحات */
         * {
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
@@ -47,24 +46,39 @@
             text-align: center;
             display: flex;
             flex-direction: column;
-            padding-top: 30px;
+            padding-top: 15px; /* تم تعديلها لتكون 15px كما طلبت */
             padding-bottom: 10px;
             box-sizing: border-box;
         }
 
         @media (display-mode: standalone) {
-            .container { padding-top: 1.25cm !important; }
+            .container { padding-top: 0.8cm !important; }
         }
 
-        header h1 { 
-            font-size: 1.6rem; margin: 0 0 15px 0; line-height: 1.2; 
-            white-space: nowrap; cursor: pointer; transition: color 0.3s;
+        header { margin-bottom: 15px; }
+        
+        .sub-title { 
+            font-size: 0.95rem; 
+            color: #ffffff; 
+            opacity: 1; 
+            margin: 0; 
+            font-weight: 400; 
         }
-        header h1:active { color: var(--primary-color); }
+
+        .city-name { 
+            font-size: 2.1rem; 
+            margin: 8px 0; 
+            color: var(--primary-color); 
+            font-weight: 700; 
+            cursor: pointer;
+            display: block;
+            line-height: 1.1;
+        }
 
         #current-date-header {
-            color: var(--primary-color); font-size: 1rem; margin: 0 0 25px 0; 
-            cursor: pointer; min-height: 1.2em;
+            color: var(--text-color); font-size: 1rem; 
+            margin: 0 0 15px 0; /* تم تعديلها لتكون 15px كما طلبت */
+            cursor: pointer; min-height: 1.2em; opacity: 0.8;
         }
 
         .prayer-times-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; flex-shrink: 0; }
@@ -193,7 +207,8 @@
 
     <div class="container">
         <header>
-            <h1 id="city-header">مواقيت الصلاة</h1>
+            <p class="sub-title">مواقيت الصلاة في</p>
+            <h1 id="city-header" class="city-name">--</h1>
             <p id="current-date-header">تحميل البيانات...</p>
         </header>
         
@@ -287,7 +302,7 @@
             }
 
             async function initializeCity(cityId, cityName) {
-                cityHeader.textContent = `مواقيت الصلاة لمدينة ${cityName}`;
+                cityHeader.textContent = cityName;
                 prayerData = await fetchAndParsePrayerData(cityId);
                 if (prayerData) { displayedDate = new Date(); updateUIForDate(displayedDate); }
                 closeCityBtn.style.display = 'block';
