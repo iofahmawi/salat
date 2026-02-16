@@ -1,72 +1,49 @@
-// sw.js - مواقيت الصلاة (نسخة التخزين الديناميكي المضمونة)
-const CACHE_NAME = 'prayer-times-v28'; // قمت بتغيير الرقم لفرض التحديث
-
-// سنخزن فقط الصفحة الرئيسية لضمان نجاح التثبيت مهما حدث
-const urlsToCache = [
+const CACHE_NAME = 'salat-v2';
+const ASSETS_TO_CACHE = [
   './',
-  'index.html'
+  './index.html',
+  './icon-1024.png'
 ];
 
-self.addEventListener('install', event => {
-  self.skipWaiting(); // تفعيل التحديث فوراً دون انتظار
+// تثبيت الـ Service Worker وحفظ الملفات الأساسية في الذاكرة
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Service Worker: Caching critical files');
-        return cache.addAll(urlsToCache);
-      })
-      .catch(err => {
-        console.error('Service Worker: Install failed', err);
-      })
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(ASSETS_TO_CACHE);
+    })
   );
+  self.skipWaiting();
 });
 
-self.addEventListener('activate', event => {
+// تنظيف الذاكرة القديمة عند تحديث الـ Service Worker
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(cacheNames => {
+    caches.keys().then((keys) => {
       return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Service Worker: Clearing old cache');
-            return caches.delete(cacheName);
-          }
-        })
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
       );
-    }).then(() => {
-      console.log('Service Worker: Activated');
-      return self.clients.claim();
     })
   );
+  self.clients.claim();
 });
 
-self.addEventListener('fetch', event => {
-  // استراتيجية: الشبكة أولاً، ثم الكاش، مع حفظ كل ما يتم تحميله
-  // Network first, falling back to cache, then save network response
-  
+// استراتيجية الاستجابة: يحاول جلب البيانات من الإنترنت أولاً، إذا فشل (أوفلاين) يجلبها من الكاش
+self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.match(event.request).then(response => {
-        // 1. حاول جلبه من الكاش أولاً (لسرعة العرض)
-        if (response) {
-          // حتى لو وجدناه في الكاش، نحاول تحديثه من النت في الخلفية للمرة القادمة
-          // (اختياري، لكن هنا سنعتمد على الكاش الموجود حال عدم وجود نت)
-          return response;
-        }
-
-        // 2. إذا لم يكن في الكاش، اطلبه من النت
-        return fetch(event.request)
-          .then(networkResponse => {
-            // خزنه في الكاش للمستقبل
-            if(networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
-                 cache.put(event.request, networkResponse.clone());
-            }
-            return networkResponse;
-          })
-          .catch(() => {
-             // هنا وصلنا لطريق مسدود: لا نت ولا كاش
-             // يمكن عرض صفحة بديلة أو رسالة خطأ
+    fetch(event.request)
+      .then((response) => {
+        // إذا نجح الاتصال، قم بتخزين نسخة محدثة في الكاش
+        if (event.request.method === 'GET' && response.status === 200) {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
           });
-      });
-    })
+        }
+        return response;
+      })
+      .catch(() => {
+        // إذا فشل الاتصال (أوفلاين)، ابحث عنها في الكاش
+        return caches.match(event.request);
+      })
   );
 });
