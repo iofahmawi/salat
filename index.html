@@ -20,6 +20,13 @@
             --disabled-color: #4A5568;
         }
 
+        /* منع الومضة الزرقاء والتركيز البرتقالي في كل المتصفحات */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            outline: none !important;
+        }
+
         html, body { height: 100%; margin: 0; overflow: hidden; background-color: var(--bg-color); }
 
         body {
@@ -30,6 +37,7 @@
             box-sizing: border-box;
             display: flex;
             justify-content: center;
+            user-select: none; /* منع تحديد النصوص لتحسين ملمس التطبيق */
         }
 
         .container {
@@ -51,13 +59,12 @@
         header h1 { 
             font-size: 1.6rem; margin: 0 0 15px 0; line-height: 1.2; 
             white-space: nowrap; cursor: pointer; transition: color 0.3s;
-            -webkit-tap-highlight-color: transparent;
         }
         header h1:active { color: var(--primary-color); }
 
         #current-date-header {
             color: var(--primary-color); font-size: 1rem; margin: 0 0 25px 0; 
-            cursor: pointer; min-height: 1.2em; -webkit-tap-highlight-color: transparent;
+            cursor: pointer; min-height: 1.2em;
         }
 
         .prayer-times-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; flex-shrink: 0; }
@@ -77,7 +84,6 @@
             box-shadow: 0 0 8px rgba(225, 197, 110, 0.3) !important; 
             background: var(--card-color) !important; 
             transform: scale(1.03); 
-            -webkit-box-shadow: 0 0 8px rgba(225, 197, 110, 0.3) !important;
             z-index: 5;
         }
 
@@ -91,19 +97,16 @@
             background: var(--card-color); border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--primary-color); border-radius: 50%; width: 60px; height: 60px;
             font-size: 1.8rem; cursor: pointer; display: flex; justify-content: center; align-items: center;
-            padding-bottom: 5px; transition: all 0.2s ease; -webkit-tap-highlight-color: transparent;
+            padding-bottom: 5px; transition: all 0.2s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         .nav-arrow:active { transform: scale(0.9); background: var(--primary-color); color: var(--bg-color); }
         .nav-arrow:disabled { opacity: 0.2; cursor: not-allowed; }
 
-        /* تعديل التوقيع لإزالة الوميض الأزرق */
         .footer-signature { 
             margin-top: 15px; font-size: 0.75rem; color: var(--text-color); 
             opacity: 0.8; flex-shrink: 0; text-decoration: none; display: block;
             transition: opacity 0.3s;
-            -webkit-tap-highlight-color: transparent; /* يزيل الوميض الأزرق تماماً */
-            outline: none;
         }
         .footer-signature:active { opacity: 1; }
         .footer-signature span { color: var(--primary-color); font-weight: 600; font-size: 0.85rem; margin-right: 4px; font-family: 'Segoe UI', sans-serif; }
@@ -112,29 +115,46 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);
             display: none; justify-content: center; align-items: flex-start;
-            padding-top: 10vh; z-index: 1000;
+            padding-top: 12vh; z-index: 1000;
         }
         .modal-content {
             background: #1b263b; border: 1px solid rgba(225, 197, 110, 0.3);
-            padding: 25px; border-radius: 20px; text-align: center;
-            width: 85%; max-width: 340px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            padding: 22px; border-radius: 24px; text-align: center;
+            width: fit-content; min-width: 280px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
-        .city-selection-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .city-btn {
-            background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px; aspect-ratio: 1/1; cursor: pointer; font-family: 'Cairo';
-            transition: all 0.2s; -webkit-tap-highlight-color: transparent;
-        }
-        .city-btn:active { background: var(--primary-color); color: var(--bg-color); transform: scale(0.95); }
 
-        .date-segment-input { width: 65px; padding: 10px; border-radius: 10px; border: 1px solid var(--primary-color); background: #000; color: #fff; text-align: center; }
-        #go-to-date-btn { background: var(--primary-color); color: var(--bg-color); border: none; padding: 12px; width: 100%; border-radius: 12px; font-weight: 700; margin-top: 15px; cursor: pointer; }
+        .city-selection-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 15px; }
+        .city-btn {
+            background: rgba(255, 255, 255, 0.03); color: #fff; border: 1px solid rgba(225, 197, 110, 0.15);
+            border-radius: 14px; padding: 12px 5px; cursor: pointer; font-family: 'Cairo';
+            font-size: 0.85rem; font-weight: 600; transition: all 0.2s ease;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .city-btn:active { background: var(--primary-color); color: var(--bg-color); transform: scale(0.92); border-color: var(--primary-color); }
+
+        .date-selection-container { display: inline-flex; flex-direction: column; align-items: center; gap: 15px; }
+        .date-input-group { display: flex; gap: 8px; justify-content: center; }
+        .input-field { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .input-field label { font-size: 0.7rem; color: var(--primary-color); opacity: 0.9; }
+        .date-segment-input { 
+            width: 55px; padding: 10px 0; border-radius: 10px; border: 1px solid rgba(225, 197, 110, 0.2); 
+            background: rgba(0, 0, 0, 0.2); color: #fff; text-align: center; font-size: 1rem; 
+            font-family: 'Cairo'; outline: none;
+        }
+        #year-input { width: 75px; }
+        #go-to-date-btn { 
+            background: var(--primary-color); color: var(--bg-color); border: none; 
+            padding: 10px 0; width: 100%; border-radius: 10px; font-weight: 700; 
+            cursor: pointer; font-size: 0.95rem; transition: transform 0.1s;
+        }
+        #go-to-date-btn:active { transform: scale(0.97); }
+        #date-error-msg { color: #ff6b6b; font-size: 0.75rem; min-height: 1.2em; margin: 5px 0 0 0; }
     </style>
 </head>
 <body>
     <div id="city-modal" class="modal-overlay">
-        <div class="modal-content">
-            <h2 style="color:var(--primary-color); margin-top:0">اختر محافظتك</h2>
+        <div class="modal-content" style="max-width: 340px; width: 90%;">
+            <h2 style="color:var(--primary-color); margin-top:0; font-size: 1.25rem; font-weight: 700;">اختر المحافظة</h2>
             <div id="city-selection" class="city-selection-grid">
                 <button class="city-btn" data-city="amman" data-name="عمّان">عمّان</button>
                 <button class="city-btn" data-city="zarqa" data-name="الزرقاء">الزرقاء</button>
@@ -149,19 +169,25 @@
                 <button class="city-btn" data-city="ma'an" data-name="معان">معان</button>
                 <button class="city-btn" data-city="aqaba" data-name="العقبة">العقبة</button>
             </div>
+            <p id="close-city-modal" style="margin-top:18px; font-size:0.8rem; cursor:pointer; opacity:0.5; display:none">إغلاق</p>
         </div>
     </div>
 
     <div id="date-modal" class="modal-overlay">
         <div class="modal-content">
-            <h2 style="color:var(--primary-color); margin-top:0">اذهب إلى تاريخ</h2>
-            <div id="date-input-container" style="display:flex; gap:8px; justify-content:center">
-                <input type="number" id="day-input" class="date-segment-input" placeholder="يوم">
-                <input type="number" id="month-input" class="date-segment-input" placeholder="شهر">
-                <input type="number" id="year-input" class="date-segment-input" style="width:80px" value="2026">
+            <h2 style="color:var(--primary-color); margin-top:0; margin-bottom: 15px; font-size: 1.1rem;">اذهب إلى تاريخ</h2>
+            <div class="date-selection-container">
+                <div class="date-input-group">
+                    <div class="input-field"><label>اليوم</label><input type="number" id="day-input" class="date-segment-input" placeholder="00"></div>
+                    <div class="input-field"><label>الشهر</label><input type="number" id="month-input" class="date-segment-input" placeholder="00"></div>
+                    <div class="input-field"><label>السنة</label><input type="number" id="year-input" class="date-segment-input" value="2026"></div>
+                </div>
+                <div style="width: 100%;">
+                    <button id="go-to-date-btn">تأكيد الانتقال</button>
+                    <p id="date-error-msg"></p>
+                </div>
             </div>
-            <p id="date-error-msg" style="color:#ff6b6b; font-size:0.8rem; min-height:1.2em; margin-top:5px"></p>
-            <button id="go-to-date-btn">تأكيد</button>
+            <p onclick="document.getElementById('date-modal').style.display='none'" style="margin-top:10px; font-size:0.8rem; cursor:pointer; opacity:0.5">إلغاء</p>
         </div>
     </div>
 
@@ -194,9 +220,12 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // تسجيل Service Worker
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('sw.js').catch(() => {});
+                    navigator.serviceWorker.register('./sw.js')
+                        .then(reg => console.log('Service Worker Registered'))
+                        .catch(err => console.log('Service Worker Registration Failed', err));
                 });
             }
 
@@ -209,6 +238,7 @@
             const dateErrorMsg = document.getElementById('date-error-msg');
             const citySelectionContainer = document.getElementById('city-selection');
             const cityHeader = document.getElementById('city-header');
+            const closeCityBtn = document.getElementById('close-city-modal');
             
             let prayerData = null;
             let displayedDate = new Date();
@@ -261,19 +291,21 @@
                 cityHeader.textContent = `مواقيت الصلاة لمدينة ${cityName}`;
                 prayerData = await fetchAndParsePrayerData(cityId);
                 if (prayerData) { displayedDate = new Date(); updateUIForDate(displayedDate); }
+                closeCityBtn.style.display = 'block';
             }
 
             function updateUIForDate(date) {
                 if (!prayerData) return;
                 const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
                 const dayData = prayerData.get(dateKey);
+                if(!dayData) return;
 
                 elements.currentDateHeader.textContent = date.toLocaleDateString('ar-EG-u-nu-latn', { 
                     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' 
                 });
 
                 ['FAJR', 'SUNRISE', 'DHUHR', 'ASR', 'MAGHRIB', 'ISHA'].forEach(key => {
-                    const timeStr = dayData && dayData[key];
+                    const timeStr = dayData[key];
                     if (timeStr) {
                         const { hours, minutes } = parseTimeTo24Hour(timeStr, key);
                         elements[`${key.toLowerCase()}Time`].textContent = `${hours % 12 || 12}:${String(minutes).padStart(2, '0')} ${(key === 'FAJR' || key === 'SUNRISE') ? 'ص' : 'م'}`;
@@ -303,7 +335,6 @@
                     
                     document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('next-prayer-highlight'));
 
-                    // منطق الإمساك
                     const fajrInfo = parseTimeTo24Hour(dayData['FAJR'], 'FAJR');
                     const fajrTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), fajrInfo.hours, fajrInfo.minutes);
                     const imsakTime = new Date(fajrTime.getTime() - (15 * 60000));
@@ -311,7 +342,6 @@
                     if (now < imsakTime && now.getHours() < 12) {
                         const diffImsak = imsakTime - now;
                         const h = Math.floor(diffImsak / 3600000), m = Math.floor((diffImsak % 3600000) / 60000), s = Math.floor((diffImsak % 60000) / 1000);
-                        
                         elements.countdownTitle.innerHTML = `<span style="color:var(--primary-color)">متبقي على الإمساك</span>`;
                         elements.countdownTimer.innerHTML = formatCountdownText(h, m, s);
                         document.getElementById(`fajr-card`).classList.add('next-prayer-highlight');
@@ -339,6 +369,7 @@
             }
 
             function updateNavigation(date) {
+                if(!prayerData) return;
                 const keys = Array.from(prayerData.keys());
                 const current = new Date(date); current.setHours(0,0,0,0);
                 elements.prevDayBtn.disabled = current <= new Date(keys[0]);
@@ -356,12 +387,15 @@
             });
 
             cityHeader.addEventListener('click', () => cityModal.style.display = 'flex');
+            closeCityBtn.addEventListener('click', () => cityModal.style.display = 'none');
             elements.nextDayBtn.addEventListener('click', () => { displayedDate.setDate(displayedDate.getDate() + 1); updateUIForDate(displayedDate); });
             elements.prevDayBtn.addEventListener('click', () => { displayedDate.setDate(displayedDate.getDate() - 1); updateUIForDate(displayedDate); });
+            
             elements.currentDateHeader.addEventListener('click', () => { 
                 dayInput.value = displayedDate.getDate(); 
                 monthInput.value = displayedDate.getMonth() + 1; 
                 dateModal.style.display = 'flex'; 
+                dateErrorMsg.textContent = "";
             });
 
             goToDateBtn.addEventListener('click', () => {
@@ -370,7 +404,6 @@
                     displayedDate = new Date(d); 
                     updateUIForDate(displayedDate); 
                     dateModal.style.display = 'none'; 
-                    dateErrorMsg.textContent = "";
                 } else dateErrorMsg.textContent = "التاريخ غير متوفر";
             });
 
