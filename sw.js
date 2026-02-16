@@ -1,4 +1,4 @@
-const CACHE_NAME = 'salat-v3';
+const CACHE_NAME = 'salat-v4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
