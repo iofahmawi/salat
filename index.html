@@ -39,12 +39,11 @@
             text-align: center;
             display: flex;
             flex-direction: column;
-            padding-top: 30px; /* المسافة الافتراضية في المتصفح */
+            padding-top: 30px;
             padding-bottom: 10px;
             box-sizing: border-box;
         }
 
-        /* --- التعديل المطلوب: مسافة علوية 1.25سم فقط عند التشغيل كـ PWA --- */
         @media (display-mode: standalone) {
             .container { padding-top: 1.25cm !important; }
         }
@@ -98,7 +97,15 @@
         .nav-arrow:active { transform: scale(0.9); background: var(--primary-color); color: var(--bg-color); }
         .nav-arrow:disabled { opacity: 0.2; cursor: not-allowed; }
 
-        .footer-signature { margin-top: 15px; font-size: 0.75rem; color: var(--text-color); opacity: 0.8; flex-shrink: 0; }
+        /* تعديل التوقيع لإزالة الوميض الأزرق */
+        .footer-signature { 
+            margin-top: 15px; font-size: 0.75rem; color: var(--text-color); 
+            opacity: 0.8; flex-shrink: 0; text-decoration: none; display: block;
+            transition: opacity 0.3s;
+            -webkit-tap-highlight-color: transparent; /* يزيل الوميض الأزرق تماماً */
+            outline: none;
+        }
+        .footer-signature:active { opacity: 1; }
         .footer-signature span { color: var(--primary-color); font-weight: 600; font-size: 0.85rem; margin-right: 4px; font-family: 'Segoe UI', sans-serif; }
 
         .modal-overlay {
@@ -182,7 +189,7 @@
             <button id="next-day-btn" class="nav-arrow">&gt;</button>
         </div>
         
-        <footer class="footer-signature">طوّر بواسطة <span>iofahmawi</span></footer>
+        <a href="https://github.com/iofahmawi/salat" target="_blank" class="footer-signature">طوّر بواسطة <span>iofahmawi</span></a>
     </div>
 
     <script>
@@ -223,6 +230,13 @@
                 if (num === 2) return dual;
                 if (num >= 3 && num <= 10) return `${numSpan} ${plur}`;
                 return `${numSpan} ${sing}`;
+            }
+
+            function formatCountdownText(h, m, s) {
+                let hT = h > 0 ? formatAr(h, "ساعة", "ساعتان", "ساعات") : "";
+                let mT = m > 0 ? formatAr(m, "دقيقة", "دقيقتان", "دقائق") : "";
+                let sT = (h === 0 && m < 5) ? formatAr(s, "ثانية", "ثانيتان", "ثوانٍ") : "";
+                return `${hT} ${h > 0 && mT != '' ? 'و' : ''} ${mT} ${mT != '' && sT != '' ? 'و' : ''} ${sT}`.trim();
             }
 
             async function fetchAndParsePrayerData(cityId) {
@@ -289,6 +303,21 @@
                     
                     document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('next-prayer-highlight'));
 
+                    // منطق الإمساك
+                    const fajrInfo = parseTimeTo24Hour(dayData['FAJR'], 'FAJR');
+                    const fajrTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), fajrInfo.hours, fajrInfo.minutes);
+                    const imsakTime = new Date(fajrTime.getTime() - (15 * 60000));
+
+                    if (now < imsakTime && now.getHours() < 12) {
+                        const diffImsak = imsakTime - now;
+                        const h = Math.floor(diffImsak / 3600000), m = Math.floor((diffImsak % 3600000) / 60000), s = Math.floor((diffImsak % 60000) / 1000);
+                        
+                        elements.countdownTitle.innerHTML = `<span style="color:var(--primary-color)">متبقي على الإمساك</span>`;
+                        elements.countdownTimer.innerHTML = formatCountdownText(h, m, s);
+                        document.getElementById(`fajr-card`).classList.add('next-prayer-highlight');
+                        return;
+                    }
+
                     let nextP = null;
                     for (const key of ['FAJR', 'DHUHR', 'ASR', 'MAGHRIB', 'ISHA']) {
                         const { hours, minutes } = parseTimeTo24Hour(dayData[key], key);
@@ -299,11 +328,8 @@
                     if (nextP) {
                         const diff = nextP.time - now;
                         const h = Math.floor(diff / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
-                        let hT = h > 0 ? formatAr(h, "ساعة", "ساعتان", "ساعات") : "";
-                        let mT = m > 0 ? formatAr(m, "دقيقة", "دقيقتان", "دقائق") : "";
-                        let sT = (h === 0 && m < 5) ? formatAr(s, "ثانية", "ثانيتان", "ثوانٍ") : "";
                         elements.countdownTitle.textContent = `متبقي على صلاة ${nextP.name}`;
-                        elements.countdownTimer.innerHTML = `${hT} ${h>0 && mT!=''?'و':''} ${mT} ${mT!='' && sT!=''?'و':''} ${sT}`.trim();
+                        elements.countdownTimer.innerHTML = formatCountdownText(h, m, s);
                         document.getElementById(`${nextP.key.toLowerCase()}-card`).classList.add('next-prayer-highlight');
                     } else {
                         elements.countdownTitle.textContent = "انتهت صلوات اليوم";
