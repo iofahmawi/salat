@@ -47,7 +47,7 @@
             display: flex;
             flex-direction: column;
             padding-top: 15px; 
-            padding-bottom: 10px;
+            padding-bottom: 25px;
         }
 
         @media (display-mode: standalone) {
@@ -65,7 +65,7 @@
 
         .city-name { 
             font-size: 2.1rem; 
-            margin: 15px 0; /* المسافة المطلوبة 15px */
+            margin: 15px 0;
             color: var(--primary-color); 
             font-weight: 700; 
             cursor: pointer;
@@ -91,7 +91,6 @@
         .prayer-card h2 { margin: 0 0 8px; font-size: 0.95rem; color: var(--primary-color); font-weight: 600; }
         .prayer-card p { margin: 0; font-size: 1.4rem; font-weight: 700; }
 
-        /* التوهج الأصلي (8px) */
         .next-prayer-highlight { 
             border: 2px solid var(--primary-color) !important; 
             box-shadow: 0 0 8px rgba(225, 197, 110, 0.3) !important; 
@@ -116,13 +115,6 @@
         .nav-arrow:active { transform: scale(0.9); background: var(--primary-color); color: var(--bg-color); }
         .nav-arrow:disabled { opacity: 0.2; cursor: not-allowed; }
 
-        /* التوقيع بالأصفر */
-        .footer-signature { 
-            margin-top: 15px; font-size: 0.75rem; color: var(--text-color); 
-            opacity: 0.8; flex-shrink: 0; text-decoration: none; display: block;
-        }
-        .footer-signature span { color: var(--primary-color); font-weight: 600; font-size: 0.85rem; margin-right: 4px; }
-
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);
@@ -143,9 +135,13 @@
         }
 
         .date-selection-container { display: inline-flex; flex-direction: column; align-items: center; gap: 15px; }
+        
         .date-segment-input { 
-            width: 55px; padding: 10px 0; border-radius: 10px; border: 1px solid rgba(225, 197, 110, 0.2); 
+            width: 65px; padding: 10px 0; border-radius: 10px; border: 1px solid rgba(225, 197, 110, 0.2); 
             background: rgba(0, 0, 0, 0.2); color: #fff; text-align: center; font-family: 'Cairo';
+            /* لضمان بقاء الأرقام غربية داخل الصندوق */
+            direction: ltr;
+            unicode-bidi: bidi-override;
         }
         #go-to-date-btn { background: var(--primary-color); color: var(--bg-color); border: none; padding: 10px 0; width: 100%; border-radius: 10px; font-weight: 700; cursor: pointer; }
     </style>
@@ -176,7 +172,7 @@
         <div class="modal-content">
             <h2 style="color:var(--primary-color);">اذهب إلى تاريخ</h2>
             <div class="date-selection-container">
-                <div style="display: flex; gap: 8px;">
+                <div style="display: flex; gap: 8px; direction: rtl;">
                     <input type="number" id="day-input" class="date-segment-input" placeholder="يوم">
                     <input type="number" id="month-input" class="date-segment-input" placeholder="شهر">
                     <input type="number" id="year-input" class="date-segment-input" value="2026">
@@ -212,13 +208,10 @@
             <button id="prev-day-btn" class="nav-arrow">&lt;</button>
             <button id="next-day-btn" class="nav-arrow">&gt;</button>
         </div>
-        
-        <a href="https://github.com/iofahmawi/salat" target="_blank" class="footer-signature">طوّر بواسطة <span>Fahmawi</span></a>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // تسجيل Service Worker
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('./sw.js')
@@ -333,7 +326,6 @@
                     
                     document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('next-prayer-highlight'));
 
-                    // منطق الإمساك
                     const fajrInfo = parseTimeTo24Hour(dayData['FAJR'], 'FAJR');
                     const fajrTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), fajrInfo.hours, fajrInfo.minutes);
                     const imsakTime = new Date(fajrTime.getTime() - (15 * 60000));
