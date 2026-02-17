@@ -131,7 +131,7 @@
         .modal-content {
             background: #1b263b; border: 1px solid rgba(225, 197, 110, 0.3);
             padding: 30px 25px; border-radius: 28px; text-align: center;
-            width: fit-content; min-width: 300px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            width: fit-content; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
             pointer-events: auto;
         }
 
@@ -143,18 +143,28 @@
         }
 
         .date-selection-container { 
-            display: flex; flex-direction: column; align-items: center; 
-            gap: 20px; margin-top: 20px;
+            display: inline-flex; /* لضمان أن الحاوية تأخذ عرض محتواها فقط */
+            flex-direction: column; 
+            align-items: center; 
+            gap: 20px; 
+            margin-top: 20px;
         }
         
+        .date-inputs-row {
+            display: flex; gap: 10px; direction: rtl;
+        }
+
         .date-segment-input { 
             width: 70px; padding: 12px 0; border-radius: 12px; border: 1px solid rgba(225, 197, 110, 0.2); 
             background: rgba(0, 0, 0, 0.2); color: #fff; text-align: center; font-family: 'Cairo';
             direction: ltr; unicode-bidi: bidi-override; font-size: 1rem;
         }
+
         #go-to-date-btn { 
             background: var(--primary-color); color: var(--bg-color); border: none; 
-            padding: 12px 0; width: 100%; border-radius: 12px; font-weight: 700; 
+            padding: 12px 0; 
+            width: 100%; /* سيأخذ عرض الحاوية الأب (date-inputs-row) */
+            border-radius: 12px; font-weight: 700; 
             cursor: pointer; font-size: 1rem; transition: opacity 0.2s;
         }
         #go-to-date-btn:active { opacity: 0.8; }
@@ -185,7 +195,7 @@
         <div class="modal-content">
             <h2 style="color:var(--primary-color); margin: 0;">اذهب إلى تاريخ</h2>
             <div class="date-selection-container">
-                <div style="display: flex; gap: 10px; direction: rtl;">
+                <div class="date-inputs-row">
                     <input type="number" id="day-input" class="date-segment-input" placeholder="يوم">
                     <input type="number" id="month-input" class="date-segment-input" placeholder="شهر">
                     <input type="number" id="year-input" class="date-segment-input" value="2026">
@@ -224,6 +234,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Service Worker Registration
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('./sw.js')
@@ -255,6 +266,7 @@
                 countdownTitle: document.getElementById('countdown-title'), countdownTimer: document.getElementById('countdown-timer')
             };
 
+            // إغلاق المودال عند النقر في الخارج
             [cityModal, dateModal].forEach(modal => {
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) {
@@ -413,7 +425,10 @@
                     displayedDate = new Date(d); 
                     updateUIForDate(displayedDate); 
                     dateModal.style.display = 'none'; 
-                } else dateErrorMsg.textContent = "التاريخ غير متوفر";
+                    dateErrorMsg.textContent = "";
+                } else {
+                    dateErrorMsg.textContent = "التاريخ غير متوفر";
+                }
             });
 
             const savedId = localStorage.getItem('selectedCityId');
