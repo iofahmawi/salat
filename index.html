@@ -112,7 +112,15 @@
             padding-bottom: 5px; transition: all 0.2s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
-        .nav-arrow:active { transform: scale(0.9); background: var(--primary-color); color: var(--bg-color); }
+
+        /* تعديل تأثير النقر: تغيير الإطار فقط والحفاظ على الخلفية */
+        .nav-arrow:active { 
+            transform: scale(0.92); 
+            border-color: var(--primary-color); 
+            background: var(--card-color); /* يبقى نفس لون الكارد */
+            color: var(--primary-color); /* يبقى السهم ذهبي */
+        }
+
         .nav-arrow:disabled { opacity: 0.2; cursor: not-allowed; }
 
         .modal-overlay {
@@ -139,7 +147,6 @@
         .date-segment-input { 
             width: 65px; padding: 10px 0; border-radius: 10px; border: 1px solid rgba(225, 197, 110, 0.2); 
             background: rgba(0, 0, 0, 0.2); color: #fff; text-align: center; font-family: 'Cairo';
-            /* لضمان بقاء الأرقام غربية داخل الصندوق */
             direction: ltr;
             unicode-bidi: bidi-override;
         }
