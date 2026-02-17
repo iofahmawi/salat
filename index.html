@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مواقيت الصلاة</title>
+    <title>مواقيت الصلاة - الإمساك</title>
     <meta name="theme-color" content="#0d1321">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icon-1024.png">
@@ -143,7 +143,7 @@
         }
 
         .date-selection-container { 
-            display: inline-flex; /* لضمان أن الحاوية تأخذ عرض محتواها فقط */
+            display: inline-flex;
             flex-direction: column; 
             align-items: center; 
             gap: 20px; 
@@ -163,7 +163,7 @@
         #go-to-date-btn { 
             background: var(--primary-color); color: var(--bg-color); border: none; 
             padding: 12px 0; 
-            width: 100%; /* سيأخذ عرض الحاوية الأب (date-inputs-row) */
+            width: 100%;
             border-radius: 12px; font-weight: 700; 
             cursor: pointer; font-size: 1rem; transition: opacity 0.2s;
         }
@@ -214,8 +214,8 @@
         </header>
         
         <div class="prayer-times-grid">
+            <div class="prayer-card" id="imsak-card"><h2>الإمساك</h2><p id="imsak-time">--:--</p></div>
             <div class="prayer-card" id="fajr-card"><h2>الفجر</h2><p id="fajr-time">--:--</p></div>
-            <div class="prayer-card" id="sunrise-card"><h2>الشروق</h2><p id="sunrise-time">--:--</p></div>
             <div class="prayer-card" id="dhuhr-card"><h2>الظهر</h2><p id="dhuhr-time">--:--</p></div>
             <div class="prayer-card" id="asr-card"><h2>العصر</h2><p id="asr-time">--:--</p></div>
             <div class="prayer-card" id="maghrib-card"><h2>المغرب</h2><p id="maghrib-time">--:--</p></div>
@@ -234,7 +234,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Service Worker Registration
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('./sw.js')
@@ -254,19 +253,23 @@
             
             let prayerData = null;
             let displayedDate = new Date();
-            const prayerNames = {FAJR:'الفجر', SUNRISE:'الشروق', DHUHR:'الظهر', ASR:'العصر', MAGHRIB:'المغرب', ISHA:'العشاء'};
+            const prayerNames = {FAJR:'الفجر', DHUHR:'الظهر', ASR:'العصر', MAGHRIB:'المغرب', ISHA:'العشاء'};
             let countdownInterval = null;
 
             const elements = {
-                fajrTime: document.getElementById('fajr-time'), sunriseTime: document.getElementById('sunrise-time'),
-                dhuhrTime: document.getElementById('dhuhr-time'), asrTime: document.getElementById('asr-time'),
-                maghribTime: document.getElementById('maghrib-time'), ishaTime: document.getElementById('isha-time'),
-                nextDayBtn: document.getElementById('next-day-btn'), prevDayBtn: document.getElementById('prev-day-btn'),
+                imsakTime: document.getElementById('imsak-time'),
+                fajrTime: document.getElementById('fajr-time'), 
+                dhuhrTime: document.getElementById('dhuhr-time'), 
+                asrTime: document.getElementById('asr-time'),
+                maghribTime: document.getElementById('maghrib-time'), 
+                ishaTime: document.getElementById('isha-time'),
+                nextDayBtn: document.getElementById('next-day-btn'), 
+                prevDayBtn: document.getElementById('prev-day-btn'),
                 currentDateHeader: document.getElementById('current-date-header'),
-                countdownTitle: document.getElementById('countdown-title'), countdownTimer: document.getElementById('countdown-timer')
+                countdownTitle: document.getElementById('countdown-title'), 
+                countdownTimer: document.getElementById('countdown-timer')
             };
 
-            // إغلاق المودال عند النقر في الخارج
             [cityModal, dateModal].forEach(modal => {
                 modal.addEventListener('click', (e) => {
                     if (e.target === modal) {
@@ -299,7 +302,7 @@
                     const csvText = await response.text();
                     return new Map(csvText.trim().split('\n').slice(1).map(line => {
                         const [date, fajr, sunrise, dhuhr, asr, maghrib, isha] = line.split(',');
-                        return [date, { FAJR: fajr, SUNRISE: sunrise, DHUHR: dhuhr, ASR: asr, MAGHRIB: maghrib, ISHA: isha }];
+                        return [date, { FAJR: fajr, DHUHR: dhuhr, ASR: asr, MAGHRIB: maghrib, ISHA: isha }];
                     }));
                 } catch (e) { return null; }
             }
@@ -327,11 +330,19 @@
 
                 elements.currentDateHeader.textContent = date.toLocaleDateString('ar-EG-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
-                ['FAJR', 'SUNRISE', 'DHUHR', 'ASR', 'MAGHRIB', 'ISHA'].forEach(key => {
+                // حساب الإمساك (الفجر - 15 دقيقة)
+                const fajrRaw = dayData['FAJR'];
+                const fInfo = parseTimeTo24Hour(fajrRaw, 'FAJR');
+                const fajrDateObj = new Date(2026, 0, 1, fInfo.hours, fInfo.minutes);
+                const imsakDateObj = new Date(fajrDateObj.getTime() - (15 * 60000));
+                
+                elements.imsakTime.textContent = `${imsakDateObj.getHours() % 12 || 12}:${String(imsakDateObj.getMinutes()).padStart(2, '0')} ص`;
+
+                ['FAJR', 'DHUHR', 'ASR', 'MAGHRIB', 'ISHA'].forEach(key => {
                     const timeStr = dayData[key];
                     if (timeStr) {
                         const { hours, minutes } = parseTimeTo24Hour(timeStr, key);
-                        elements[`${key.toLowerCase()}Time`].textContent = `${hours % 12 || 12}:${String(minutes).padStart(2, '0')} ${(key === 'FAJR' || key === 'SUNRISE') ? 'ص' : 'م'}`;
+                        elements[`${key.toLowerCase()}Time`].textContent = `${hours % 12 || 12}:${String(minutes).padStart(2, '0')} ${key === 'FAJR' ? 'ص' : 'م'}`;
                     }
                 });
                 startCountdown(date);
@@ -366,7 +377,7 @@
                         const h = Math.floor(diffImsak / 3600000), m = Math.floor((diffImsak % 3600000) / 60000), s = Math.floor((diffImsak % 60000) / 1000);
                         elements.countdownTitle.innerHTML = `<span style="color:var(--primary-color)">متبقي على الإمساك</span>`;
                         elements.countdownTimer.innerHTML = formatCountdownText(h, m, s);
-                        document.getElementById(`fajr-card`).classList.add('next-prayer-highlight');
+                        document.getElementById(`imsak-card`).classList.add('next-prayer-highlight');
                         return;
                     }
 
