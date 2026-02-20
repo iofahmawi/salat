@@ -268,7 +268,6 @@
     </div>
 
     <script>
-        // تسجيل Service Worker للعمل بدون اتصال
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
@@ -416,7 +415,8 @@
                 
                 if (!isToday) {
                     elements.countdownTitle.textContent = "الوقت المتبقي";
-                    elements.countdownTimer.textContent = "غير متوفر الآن";
+                    // التعديل هنا: تصغير حجم الخط مع الحفاظ على السماكة 700
+                    elements.countdownTimer.innerHTML = `<span style="font-size: 1.1rem; font-weight: 700;">غير متوفر الآن</span>`;
                     document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('next-prayer-highlight'));
                     return;
                 }
@@ -457,7 +457,8 @@
                         document.getElementById(`${nextP.key.toLowerCase()}-card`).classList.add('next-prayer-highlight');
                     } else {
                         elements.countdownTitle.textContent = "انتهت صلوات اليوم";
-                        elements.countdownTimer.innerHTML = "تقبل الله طاعتكم";
+                        // التعديل هنا: تصغير حجم الخط مع الحفاظ على السماكة 700
+                        elements.countdownTimer.innerHTML = `<span style="font-size: 1.25rem; font-weight: 700;">تقبل الله طاعتكم</span>`;
                     }
                 }, 1000);
             }
