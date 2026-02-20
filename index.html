@@ -415,7 +415,6 @@
                 
                 if (!isToday) {
                     elements.countdownTitle.textContent = "الوقت المتبقي";
-                    // التعديل هنا: تصغير حجم الخط مع الحفاظ على السماكة 700
                     elements.countdownTimer.innerHTML = `<span style="font-size: 1.1rem; font-weight: 700;">غير متوفر الآن</span>`;
                     document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('next-prayer-highlight'));
                     return;
@@ -434,7 +433,12 @@
                     
                     if (now.getTime() < imsakTime && now.getHours() < 12) {
                         const diff = imsakTime - now.getTime();
-                        elements.countdownTitle.innerHTML = `<span style="color:var(--accent-color)">متبقي على الإمساك</span>`;
+                        
+                        // التعديل الجديد هنا: إزالة اللون المميز في الوضع النهاري
+                        const currentTheme = document.documentElement.getAttribute('data-theme');
+                        const titleStyle = currentTheme === 'light' ? '' : 'style="color:var(--accent-color)"';
+                        
+                        elements.countdownTitle.innerHTML = `<span ${titleStyle}>متبقي على الإمساك</span>`;
                         elements.countdownTimer.innerHTML = formatCountdownText(Math.floor(diff/3600000), Math.floor((diff%3600000)/60000), Math.floor((diff%60000)/1000));
                         document.getElementById('imsak-card').classList.add('next-prayer-highlight');
                         return;
@@ -457,7 +461,6 @@
                         document.getElementById(`${nextP.key.toLowerCase()}-card`).classList.add('next-prayer-highlight');
                     } else {
                         elements.countdownTitle.textContent = "انتهت صلوات اليوم";
-                        // التعديل هنا: تصغير حجم الخط مع الحفاظ على السماكة 700
                         elements.countdownTimer.innerHTML = `<span style="font-size: 1.25rem; font-weight: 700;">تقبل الله طاعتكم</span>`;
                     }
                 }, 1000);
