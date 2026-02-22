@@ -13,7 +13,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* الوضع الليلي */
             --bg-color: #0d1321;
             --card-color: rgba(27, 38, 59, 0.6);
             --text-color: #ffffff; 
@@ -26,7 +25,6 @@
         }
 
         [data-theme="light"] {
-            /* الوضع النهاري */
             --bg-color: #f0f4f8;
             --card-color: rgba(255, 255, 255, 0.9);
             --text-color: #2d3436;
@@ -269,6 +267,7 @@
     </div>
 
     <script>
+        // تفعيل الـ Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
@@ -309,7 +308,7 @@
             let displayedDate = new Date();
             const prayerNames = {IMSAK: 'الإمساك', FAJR:'الفجر', DHUHR:'الظهر', ASR:'العصر', MAGHRIB:'المغرب', ISHA:'العشاء'};
             let countdownInterval = null;
-            let manualSelectedPrayerKey = null; // متغير لحفظ الصلاة المختارة يدوياً
+            let manualSelectedPrayerKey = null;
 
             const elements = {
                 imsakTime: document.getElementById('imsak-time'),
@@ -334,7 +333,6 @@
                 });
             });
 
-            // إضافة مستمع للضغط على بطاقات الصلاة
             document.querySelectorAll('.prayer-card[data-key]').forEach(card => {
                 card.addEventListener('click', function() {
                     manualSelectedPrayerKey = this.getAttribute('data-key');
@@ -403,7 +401,24 @@
                 const dayData = prayerData.get(dateKey);
                 if(!dayData) return;
 
-                elements.currentDateHeader.textContent = date.toLocaleDateString('ar-EG-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                // الحصول على اسم اليوم الصحيح
+                const dayNameFormatter = new Intl.DateTimeFormat('ar-SA', { weekday: 'long' });
+                const dayName = dayNameFormatter.format(date);
+
+                // ضبط التاريخ الهجري ليوافق 4 رمضان
+                let hijriDate = new Date(date);
+                hijriDate.setDate(hijriDate.getDate() - 1); 
+
+                const hijriInfoFormatter = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura-nu-latn', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+                
+                // --- التعديل هنا: إزالة حرف "هـ" من النهاية ---
+                let formattedHijri = hijriInfoFormatter.format(hijriDate).replace(/[هـ]/g, '').trim();
+                elements.currentDateHeader.textContent = `${dayName}، ${formattedHijri}`;
+                // ------------------------------------------
 
                 const fInfo = parseTimeTo24Hour(dayData['FAJR'], 'FAJR');
                 const imsakDateObj = new Date(new Date(2026, 0, 1, fInfo.hours, fInfo.minutes).getTime() - (15 * 60000));
@@ -438,7 +453,6 @@
 
                     let targetPrayer = null;
 
-                    // إذا قام المستخدم بالاختيار يدوياً
                     if (manualSelectedPrayerKey) {
                         let targetTime;
                         if (manualSelectedPrayerKey === 'IMSAK') {
@@ -449,7 +463,6 @@
                             targetTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes).getTime();
                         }
 
-                        // إذا كان الوقت المختار قد مضى، نلغي الاختيار اليدوي ليعود للنظام التلقائي
                         if (now.getTime() > targetTime) {
                             manualSelectedPrayerKey = null; 
                         } else {
@@ -457,7 +470,6 @@
                         }
                     }
 
-                    // إذا لم يكن هناك اختيار يدوي أو انتهى وقت المختار يدوياً، نستخدم النظام التلقائي
                     if (!targetPrayer) {
                         const fInfo = parseTimeTo24Hour(dayData['FAJR'], 'FAJR');
                         const imsakTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), fInfo.hours, fInfo.minutes).getTime() - (15 * 60000);
@@ -480,10 +492,7 @@
 
                     if (targetPrayer) {
                         const diff = targetPrayer.time - now.getTime();
-                        const currentTheme = document.documentElement.getAttribute('data-theme');
-                        const titleStyle = (targetPrayer.key === 'IMSAK' && currentTheme !== 'light') ? 'style="color:var(--accent-color)"' : '';
-                        
-                        elements.countdownTitle.innerHTML = `<span ${titleStyle}>متبقي على ${targetPrayer.key === 'IMSAK' ? '' : 'صلاة '}${targetPrayer.name}</span>`;
+                        elements.countdownTitle.innerHTML = `<span>متبقي على ${targetPrayer.key === 'IMSAK' ? '' : 'صلاة '}${targetPrayer.name}</span>`;
                         elements.countdownTimer.innerHTML = formatCountdownText(Math.floor(diff/3600000), Math.floor((diff%3600000)/60000), Math.floor((diff%60000)/1000));
                         document.getElementById(`${targetPrayer.key.toLowerCase()}-card`).classList.add('next-prayer-highlight');
                     } else {
