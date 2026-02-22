@@ -81,7 +81,7 @@
         }
 
         #theme-toggle:active { transform: scale(0.85); }
-        
+
         .sun-icon { color: var(--sun-color); width: 100%; height: 100%; fill: currentColor; }
         .moon-icon { color: #ffffff; width: 100%; height: 100%; fill: currentColor; }
 
@@ -137,10 +137,11 @@
             padding: 15px; border-radius: 16px; border: 1px solid var(--border-color);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
         }
 
-        .prayer-card h2 { margin: 0 0 8px; font-size: 0.95rem; color: var(--primary-color); font-weight: 600; }
-        .prayer-card p { margin: 0; font-size: 1.4rem; font-weight: 700; color: var(--text-color); }
+        .prayer-card h2 { margin: 0 0 8px; font-size: 0.95rem; color: var(--primary-color); font-weight: 600; pointer-events: none; }
+        .prayer-card p { margin: 0; font-size: 1.4rem; font-weight: 700; color: var(--text-color); pointer-events: none; }
 
         .next-prayer-highlight { 
             border: 2px solid var(--accent-color) !important; 
@@ -149,7 +150,7 @@
         }
         [data-theme="light"] .next-prayer-highlight { background: #ffffff !important; }
 
-        .countdown-card { grid-column: 1 / -1; margin-top: 8px; align-content: center; min-height: 90px; }
+        .countdown-card { grid-column: 1 / -1; margin-top: 8px; align-content: center; min-height: 90px; cursor: default; }
         .countdown-card p { color: var(--text-color); }
         .gold-num { color: var(--accent-color); font-weight: 800; }
 
@@ -247,14 +248,14 @@
             <h1 id="city-header" class="city-name">--</h1>
             <p id="current-date-header">تحميل البيانات...</p>
         </header>
-        
+
         <div class="prayer-times-grid">
-            <div class="prayer-card" id="imsak-card"><h2>الإمساك</h2><p id="imsak-time">--:--</p></div>
-            <div class="prayer-card" id="fajr-card"><h2>الفجر</h2><p id="fajr-time">--:--</p></div>
-            <div class="prayer-card" id="dhuhr-card"><h2>الظهر</h2><p id="dhuhr-time">--:--</p></div>
-            <div class="prayer-card" id="asr-card"><h2>العصر</h2><p id="asr-time">--:--</p></div>
-            <div class="prayer-card" id="maghrib-card"><h2>المغرب</h2><p id="maghrib-time">--:--</p></div>
-            <div class="prayer-card" id="isha-card"><h2>العشاء</h2><p id="isha-time">--:--</p></div>
+            <div class="prayer-card" id="imsak-card" data-key="IMSAK"><h2>الإمساك</h2><p id="imsak-time">--:--</p></div>
+            <div class="prayer-card" id="fajr-card" data-key="FAJR"><h2>الفجر</h2><p id="fajr-time">--:--</p></div>
+            <div class="prayer-card" id="dhuhr-card" data-key="DHUHR"><h2>الظهر</h2><p id="dhuhr-time">--:--</p></div>
+            <div class="prayer-card" id="asr-card" data-key="ASR"><h2>العصر</h2><p id="asr-time">--:--</p></div>
+            <div class="prayer-card" id="maghrib-card" data-key="MAGHRIB"><h2>المغرب</h2><p id="maghrib-time">--:--</p></div>
+            <div class="prayer-card" id="isha-card" data-key="ISHA"><h2>العشاء</h2><p id="isha-time">--:--</p></div>
             <div class="prayer-card countdown-card">
                 <h2 id="countdown-title">الوقت المتبقي</h2>
                 <p id="countdown-timer">--:--:--</p>
@@ -279,7 +280,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const themeToggle = document.getElementById('theme-toggle');
             const savedTheme = localStorage.getItem('theme') || 'dark';
-            
+
             function setTheme(theme) {
                 document.documentElement.setAttribute('data-theme', theme);
                 localStorage.setItem('theme', theme);
@@ -303,11 +304,12 @@
             const goToDateBtn = document.getElementById('go-to-date-btn');
             const dateErrorMsg = document.getElementById('date-error-msg');
             const cityHeader = document.getElementById('city-header');
-            
+
             let prayerData = null;
             let displayedDate = new Date();
-            const prayerNames = {FAJR:'الفجر', DHUHR:'الظهر', ASR:'العصر', MAGHRIB:'المغرب', ISHA:'العشاء'};
+            const prayerNames = {IMSAK: 'الإمساك', FAJR:'الفجر', DHUHR:'الظهر', ASR:'العصر', MAGHRIB:'المغرب', ISHA:'العشاء'};
             let countdownInterval = null;
+            let manualSelectedPrayerKey = null; // متغير لحفظ الصلاة المختارة يدوياً
 
             const elements = {
                 imsakTime: document.getElementById('imsak-time'),
@@ -329,6 +331,14 @@
                         if (modal === cityModal && !localStorage.getItem('selectedCityId')) return;
                         modal.style.display = 'none';
                     }
+                });
+            });
+
+            // إضافة مستمع للضغط على بطاقات الصلاة
+            document.querySelectorAll('.prayer-card[data-key]').forEach(card => {
+                card.addEventListener('click', function() {
+                    manualSelectedPrayerKey = this.getAttribute('data-key');
+                    updateUIForDate(displayedDate);
                 });
             });
 
@@ -394,7 +404,7 @@
                 if(!dayData) return;
 
                 elements.currentDateHeader.textContent = date.toLocaleDateString('ar-EG-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-                
+
                 const fInfo = parseTimeTo24Hour(dayData['FAJR'], 'FAJR');
                 const imsakDateObj = new Date(new Date(2026, 0, 1, fInfo.hours, fInfo.minutes).getTime() - (15 * 60000));
                 elements.imsakTime.textContent = `${imsakDateObj.getHours() % 12 || 12}:${String(imsakDateObj.getMinutes()).padStart(2, '0')} ص`;
@@ -412,7 +422,7 @@
             function startCountdown(date) {
                 if (countdownInterval) clearInterval(countdownInterval);
                 const isToday = date.toDateString() === new Date().toDateString();
-                
+
                 if (!isToday) {
                     elements.countdownTitle.textContent = "الوقت المتبقي";
                     elements.countdownTimer.innerHTML = `<span style="font-size: 1.1rem; font-weight: 700;">غير متوفر الآن</span>`;
@@ -426,39 +436,56 @@
                     const dayData = prayerData.get(dateKey);
                     if(!dayData) return;
 
-                    document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('next-prayer-highlight'));
-                    
-                    const fInfo = parseTimeTo24Hour(dayData['FAJR'], 'FAJR');
-                    const imsakTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), fInfo.hours, fInfo.minutes).getTime() - (15 * 60000);
-                    
-                    if (now.getTime() < imsakTime && now.getHours() < 12) {
-                        const diff = imsakTime - now.getTime();
-                        
-                        // التعديل الجديد هنا: إزالة اللون المميز في الوضع النهاري
-                        const currentTheme = document.documentElement.getAttribute('data-theme');
-                        const titleStyle = currentTheme === 'light' ? '' : 'style="color:var(--accent-color)"';
-                        
-                        elements.countdownTitle.innerHTML = `<span ${titleStyle}>متبقي على الإمساك</span>`;
-                        elements.countdownTimer.innerHTML = formatCountdownText(Math.floor(diff/3600000), Math.floor((diff%3600000)/60000), Math.floor((diff%60000)/1000));
-                        document.getElementById('imsak-card').classList.add('next-prayer-highlight');
-                        return;
-                    }
+                    let targetPrayer = null;
 
-                    let nextP = null;
-                    for (const key of ['FAJR', 'DHUHR', 'ASR', 'MAGHRIB', 'ISHA']) {
-                        const { hours, minutes } = parseTimeTo24Hour(dayData[key], key);
-                        const pTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes);
-                        if (pTime.getTime() > now.getTime()) { 
-                            nextP = { name: prayerNames[key], time: pTime, key: key }; 
-                            break; 
+                    // إذا قام المستخدم بالاختيار يدوياً
+                    if (manualSelectedPrayerKey) {
+                        let targetTime;
+                        if (manualSelectedPrayerKey === 'IMSAK') {
+                            const fInfo = parseTimeTo24Hour(dayData['FAJR'], 'FAJR');
+                            targetTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), fInfo.hours, fInfo.minutes).getTime() - (15 * 60000);
+                        } else {
+                            const { hours, minutes } = parseTimeTo24Hour(dayData[manualSelectedPrayerKey], manualSelectedPrayerKey);
+                            targetTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes).getTime();
+                        }
+
+                        // إذا كان الوقت المختار قد مضى، نلغي الاختيار اليدوي ليعود للنظام التلقائي
+                        if (now.getTime() > targetTime) {
+                            manualSelectedPrayerKey = null; 
+                        } else {
+                            targetPrayer = { name: prayerNames[manualSelectedPrayerKey], time: targetTime, key: manualSelectedPrayerKey };
                         }
                     }
 
-                    if (nextP) {
-                        const diff = nextP.time.getTime() - now.getTime();
-                        elements.countdownTitle.textContent = `متبقي على صلاة ${nextP.name}`;
+                    // إذا لم يكن هناك اختيار يدوي أو انتهى وقت المختار يدوياً، نستخدم النظام التلقائي
+                    if (!targetPrayer) {
+                        const fInfo = parseTimeTo24Hour(dayData['FAJR'], 'FAJR');
+                        const imsakTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), fInfo.hours, fInfo.minutes).getTime() - (15 * 60000);
+
+                        if (now.getTime() < imsakTime && now.getHours() < 12) {
+                            targetPrayer = { name: "الإمساك", time: imsakTime, key: 'IMSAK' };
+                        } else {
+                            for (const key of ['FAJR', 'DHUHR', 'ASR', 'MAGHRIB', 'ISHA']) {
+                                const { hours, minutes } = parseTimeTo24Hour(dayData[key], key);
+                                const pTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes).getTime();
+                                if (pTime > now.getTime()) { 
+                                    targetPrayer = { name: prayerNames[key], time: pTime, key: key }; 
+                                    break; 
+                                }
+                            }
+                        }
+                    }
+
+                    document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('next-prayer-highlight'));
+
+                    if (targetPrayer) {
+                        const diff = targetPrayer.time - now.getTime();
+                        const currentTheme = document.documentElement.getAttribute('data-theme');
+                        const titleStyle = (targetPrayer.key === 'IMSAK' && currentTheme !== 'light') ? 'style="color:var(--accent-color)"' : '';
+                        
+                        elements.countdownTitle.innerHTML = `<span ${titleStyle}>متبقي على ${targetPrayer.key === 'IMSAK' ? '' : 'صلاة '}${targetPrayer.name}</span>`;
                         elements.countdownTimer.innerHTML = formatCountdownText(Math.floor(diff/3600000), Math.floor((diff%3600000)/60000), Math.floor((diff%60000)/1000));
-                        document.getElementById(`${nextP.key.toLowerCase()}-card`).classList.add('next-prayer-highlight');
+                        document.getElementById(`${targetPrayer.key.toLowerCase()}-card`).classList.add('next-prayer-highlight');
                     } else {
                         elements.countdownTitle.textContent = "انتهت صلوات اليوم";
                         elements.countdownTimer.innerHTML = `<span style="font-size: 1.25rem; font-weight: 700;">تقبل الله طاعتكم</span>`;
@@ -485,18 +512,19 @@
             });
 
             cityHeader.addEventListener('click', () => cityModal.style.display = 'flex');
-            elements.nextDayBtn.addEventListener('click', () => { displayedDate.setDate(displayedDate.getDate() + 1); updateUIForDate(displayedDate); });
-            elements.prevDayBtn.addEventListener('click', () => { displayedDate.setDate(displayedDate.getDate() - 1); updateUIForDate(displayedDate); });
-            
+            elements.nextDayBtn.addEventListener('click', () => { manualSelectedPrayerKey = null; displayedDate.setDate(displayedDate.getDate() + 1); updateUIForDate(displayedDate); });
+            elements.prevDayBtn.addEventListener('click', () => { manualSelectedPrayerKey = null; displayedDate.setDate(displayedDate.getDate() - 1); updateUIForDate(displayedDate); });
+
             elements.currentDateHeader.addEventListener('click', () => { 
                 dayInput.value = displayedDate.getDate(); 
                 monthInput.value = displayedDate.getMonth() + 1; 
                 dateModal.style.display = 'flex'; 
             });
-            
+
             goToDateBtn.addEventListener('click', () => {
                 const dStr = `${yearInput.value}-${String(monthInput.value).padStart(2,'0')}-${String(dayInput.value).padStart(2,'0')}`;
                 if (prayerData && prayerData.has(dStr)) { 
+                    manualSelectedPrayerKey = null;
                     displayedDate = new Date(dStr); updateUIForDate(displayedDate); dateModal.style.display = 'none'; dateErrorMsg.textContent = "";
                 } else { dateErrorMsg.textContent = "التاريخ غير متوفر"; }
             });
