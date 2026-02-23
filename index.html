@@ -41,6 +41,8 @@
             -webkit-touch-callout: none;
             outline: none !important;
             box-sizing: border-box;
+            /* إزالة أي انتقال تدريجي ليكون التغيير لحظياً */
+            transition: none !important;
         }
 
         html, body { 
@@ -131,7 +133,6 @@
             padding: 15px; border-radius: 16px; border: 1px solid var(--border-color);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             cursor: pointer;
-            transition: border 0.2s ease;
         }
 
         .prayer-card h2 { margin: 0 0 8px; font-size: 0.95rem; color: var(--primary-color); font-weight: 600; pointer-events: none; }
@@ -153,7 +154,6 @@
             color: var(--primary-color); border-radius: 50%; width: 60px; height: 60px;
             font-size: 1.8rem; cursor: pointer; display: flex; justify-content: center; align-items: center;
             padding-bottom: 5px;
-            transition: all 0.2s ease;
         }
 
         .nav-arrow:active {
