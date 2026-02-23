@@ -48,7 +48,6 @@
             margin: 0; 
             overflow: hidden; 
             background-color: var(--bg-color); 
-            transition: background 0.3s ease; 
         }
 
         body {
@@ -75,10 +74,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s ease;
         }
-
-        #theme-toggle:active { transform: scale(0.85); }
 
         .sun-icon { color: var(--sun-color); width: 100%; height: 100%; fill: currentColor; }
         .moon-icon { color: #ffffff; width: 100%; height: 100%; fill: currentColor; }
@@ -133,9 +129,9 @@
         .prayer-card {
             background: var(--card-color); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             padding: 15px; border-radius: 16px; border: 1px solid var(--border-color);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             cursor: pointer;
+            transition: border 0.2s ease;
         }
 
         .prayer-card h2 { margin: 0 0 8px; font-size: 0.95rem; color: var(--primary-color); font-weight: 600; pointer-events: none; }
@@ -143,10 +139,8 @@
 
         .next-prayer-highlight { 
             border: 2px solid var(--accent-color) !important; 
-            transform: scale(1.03); 
             z-index: 5;
         }
-        [data-theme="light"] .next-prayer-highlight { background: #ffffff !important; }
 
         .countdown-card { grid-column: 1 / -1; margin-top: 8px; align-content: center; min-height: 90px; cursor: default; }
         .countdown-card p { color: var(--text-color); }
@@ -158,11 +152,17 @@
             background: var(--card-color); border: 1px solid var(--border-color);
             color: var(--primary-color); border-radius: 50%; width: 60px; height: 60px;
             font-size: 1.8rem; cursor: pointer; display: flex; justify-content: center; align-items: center;
-            padding-bottom: 5px; transition: all 0.2s ease;
+            padding-bottom: 5px;
+            transition: all 0.2s ease;
         }
 
-        .nav-arrow:active { transform: scale(0.92); color: var(--accent-color); border-color: var(--accent-color); }
-        .nav-arrow:disabled { opacity: 0.2; cursor: not-allowed; }
+        .nav-arrow:active {
+            border-color: var(--accent-color) !important;
+            color: var(--accent-color) !important;
+            transform: scale(0.95);
+        }
+
+        .nav-arrow:disabled { opacity: 0.2; cursor: not-allowed; transform: none; }
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -267,7 +267,6 @@
     </div>
 
     <script>
-        // تفعيل الـ Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
@@ -335,6 +334,8 @@
 
             document.querySelectorAll('.prayer-card[data-key]').forEach(card => {
                 card.addEventListener('click', function() {
+                    document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('next-prayer-highlight'));
+                    this.classList.add('next-prayer-highlight');
                     manualSelectedPrayerKey = this.getAttribute('data-key');
                     updateUIForDate(displayedDate);
                 });
@@ -401,11 +402,9 @@
                 const dayData = prayerData.get(dateKey);
                 if(!dayData) return;
 
-                // الحصول على اسم اليوم الصحيح
                 const dayNameFormatter = new Intl.DateTimeFormat('ar-SA', { weekday: 'long' });
                 const dayName = dayNameFormatter.format(date);
 
-                // ضبط التاريخ الهجري ليوافق 4 رمضان
                 let hijriDate = new Date(date);
                 hijriDate.setDate(hijriDate.getDate() - 1); 
 
@@ -415,10 +414,8 @@
                     year: 'numeric'
                 });
                 
-                // --- التعديل هنا: إزالة حرف "هـ" من النهاية ---
                 let formattedHijri = hijriInfoFormatter.format(hijriDate).replace(/[هـ]/g, '').trim();
                 elements.currentDateHeader.textContent = `${dayName}، ${formattedHijri}`;
-                // ------------------------------------------
 
                 const fInfo = parseTimeTo24Hour(dayData['FAJR'], 'FAJR');
                 const imsakDateObj = new Date(new Date(2026, 0, 1, fInfo.hours, fInfo.minutes).getTime() - (15 * 60000));
@@ -440,12 +437,12 @@
 
                 if (!isToday) {
                     elements.countdownTitle.textContent = "الوقت المتبقي";
-                    elements.countdownTimer.innerHTML = `<span style="font-size: 1.1rem; font-weight: 700;">غير متوفر الآن</span>`;
+                    elements.countdownTimer.innerHTML = `<span style="font-size: 1.25rem; font-weight: 700;">غير متوفر الآن</span>`;
                     document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('next-prayer-highlight'));
                     return;
                 }
 
-                countdownInterval = setInterval(() => {
+                const tick = () => {
                     const now = new Date();
                     const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
                     const dayData = prayerData.get(dateKey);
@@ -488,18 +485,27 @@
                         }
                     }
 
-                    document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('next-prayer-highlight'));
+                    if (!manualSelectedPrayerKey) {
+                        document.querySelectorAll('.prayer-card').forEach(c => c.classList.remove('next-prayer-highlight'));
+                    }
 
                     if (targetPrayer) {
                         const diff = targetPrayer.time - now.getTime();
                         elements.countdownTitle.innerHTML = `<span>متبقي على ${targetPrayer.key === 'IMSAK' ? '' : 'صلاة '}${targetPrayer.name}</span>`;
                         elements.countdownTimer.innerHTML = formatCountdownText(Math.floor(diff/3600000), Math.floor((diff%3600000)/60000), Math.floor((diff%60000)/1000));
-                        document.getElementById(`${targetPrayer.key.toLowerCase()}-card`).classList.add('next-prayer-highlight');
+                        
+                        const targetCard = document.getElementById(`${targetPrayer.key.toLowerCase()}-card`);
+                        if (!targetCard.classList.contains('next-prayer-highlight')) {
+                            targetCard.classList.add('next-prayer-highlight');
+                        }
                     } else {
                         elements.countdownTitle.textContent = "انتهت صلوات اليوم";
                         elements.countdownTimer.innerHTML = `<span style="font-size: 1.25rem; font-weight: 700;">تقبل الله طاعتكم</span>`;
                     }
-                }, 1000);
+                };
+
+                tick(); 
+                countdownInterval = setInterval(tick, 1000); 
             }
 
             function updateNavigation(date) {
