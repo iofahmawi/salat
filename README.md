@@ -33,6 +33,7 @@
 * `index.html`: الملف الأساسي الذي يحتوي على الواجهة والمنطق البرمجي.
 * `manifest.json`: ملف تعريف التطبيق للتثبيت على الأجهزة.
 * `sw.js`: ملف Service Worker للتشغيل أوفلاين.
+* `city-2026.csv`: ملف لمواقيت الصلاة لسنة كاملة لكل مدينة.
 
 <p align="center">
   <b>طوّر بواسطة</b>: <a href="https://github.com/iofahmawi">iofahmawi</a>
