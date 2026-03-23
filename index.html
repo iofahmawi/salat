@@ -402,20 +402,8 @@
                 const dayData = prayerData.get(dateKey);
                 if(!dayData) return;
 
-                const dayNameFormatter = new Intl.DateTimeFormat('ar-SA', { weekday: 'long' });
-                const dayName = dayNameFormatter.format(date);
-
-                let hijriDate = new Date(date);
-                hijriDate.setDate(hijriDate.getDate() - 1); 
-
-                const hijriInfoFormatter = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura-nu-latn', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                });
-                
-                let formattedHijri = hijriInfoFormatter.format(hijriDate).replace(/[هـ]/g, '').trim();
-                elements.currentDateHeader.textContent = `${dayName}، ${formattedHijri}`;
+                const gregorianFormatter = new Intl.DateTimeFormat('ar-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                elements.currentDateHeader.textContent = gregorianFormatter.format(date);
 
                 ['FAJR', 'SUNRISE', 'DHUHR', 'ASR', 'MAGHRIB', 'ISHA'].forEach(key => {
                     const { hours, minutes } = parseTimeTo24Hour(dayData[key], key);
