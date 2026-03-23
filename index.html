@@ -248,8 +248,8 @@
         </header>
 
         <div class="prayer-times-grid">
-            <div class="prayer-card" id="imsak-card" data-key="IMSAK"><h2>الإمساك</h2><p id="imsak-time">--:--</p></div>
             <div class="prayer-card" id="fajr-card" data-key="FAJR"><h2>الفجر</h2><p id="fajr-time">--:--</p></div>
+            <div class="prayer-card" id="sunrise-card" data-key="SUNRISE"><h2>الشروق</h2><p id="sunrise-time">--:--</p></div>
             <div class="prayer-card" id="dhuhr-card" data-key="DHUHR"><h2>الظهر</h2><p id="dhuhr-time">--:--</p></div>
             <div class="prayer-card" id="asr-card" data-key="ASR"><h2>العصر</h2><p id="asr-time">--:--</p></div>
             <div class="prayer-card" id="maghrib-card" data-key="MAGHRIB"><h2>المغرب</h2><p id="maghrib-time">--:--</p></div>
@@ -305,13 +305,13 @@
 
             let prayerData = null;
             let displayedDate = new Date();
-            const prayerNames = {IMSAK: 'الإمساك', FAJR:'الفجر', DHUHR:'الظهر', ASR:'العصر', MAGHRIB:'المغرب', ISHA:'العشاء'};
+            const prayerNames = {FAJR:'الفجر', SUNRISE:'الشروق', DHUHR:'الظهر', ASR:'العصر', MAGHRIB:'المغرب', ISHA:'العشاء'};
             let countdownInterval = null;
             let manualSelectedPrayerKey = null;
 
             const elements = {
-                imsakTime: document.getElementById('imsak-time'),
-                fajrTime: document.getElementById('fajr-time'), 
+                fajrTime: document.getElementById('fajr-time'),
+                sunriseTime: document.getElementById('sunrise-time'),
                 dhuhrTime: document.getElementById('dhuhr-time'), 
                 asrTime: document.getElementById('asr-time'),
                 maghribTime: document.getElementById('maghrib-time'), 
@@ -374,7 +374,7 @@
                         const parts = line.split(',');
                         if (parts.length >= 7) {
                             const [date, fajr, sunrise, dhuhr, asr, maghrib, isha] = parts;
-                            dataMap.set(date, { FAJR: fajr, DHUHR: dhuhr, ASR: asr, MAGHRIB: maghrib, ISHA: isha });
+                            dataMap.set(date, { FAJR: fajr, SUNRISE: sunrise, DHUHR: dhuhr, ASR: asr, MAGHRIB: maghrib, ISHA: isha });
                         }
                     });
                     return dataMap;
@@ -417,13 +417,9 @@
                 let formattedHijri = hijriInfoFormatter.format(hijriDate).replace(/[هـ]/g, '').trim();
                 elements.currentDateHeader.textContent = `${dayName}، ${formattedHijri}`;
 
-                const fInfo = parseTimeTo24Hour(dayData['FAJR'], 'FAJR');
-                const imsakDateObj = new Date(new Date(2026, 0, 1, fInfo.hours, fInfo.minutes).getTime() - (15 * 60000));
-                elements.imsakTime.textContent = `${imsakDateObj.getHours() % 12 || 12}:${String(imsakDateObj.getMinutes()).padStart(2, '0')} ص`;
-
-                ['FAJR', 'DHUHR', 'ASR', 'MAGHRIB', 'ISHA'].forEach(key => {
+                ['FAJR', 'SUNRISE', 'DHUHR', 'ASR', 'MAGHRIB', 'ISHA'].forEach(key => {
                     const { hours, minutes } = parseTimeTo24Hour(dayData[key], key);
-                    const suffix = (key === 'FAJR') ? 'ص' : 'م';
+                    const suffix = (key === 'FAJR' || key === 'SUNRISE') ? 'ص' : 'م';
                     elements[`${key.toLowerCase()}Time`].textContent = `${hours % 12 || 12}:${String(minutes).padStart(2, '0')} ${suffix}`;
                 });
 
@@ -452,13 +448,8 @@
 
                     if (manualSelectedPrayerKey) {
                         let targetTime;
-                        if (manualSelectedPrayerKey === 'IMSAK') {
-                            const fInfo = parseTimeTo24Hour(dayData['FAJR'], 'FAJR');
-                            targetTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), fInfo.hours, fInfo.minutes).getTime() - (15 * 60000);
-                        } else {
-                            const { hours, minutes } = parseTimeTo24Hour(dayData[manualSelectedPrayerKey], manualSelectedPrayerKey);
-                            targetTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes).getTime();
-                        }
+                        const { hours, minutes } = parseTimeTo24Hour(dayData[manualSelectedPrayerKey], manualSelectedPrayerKey);
+                        targetTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes).getTime();
 
                         if (now.getTime() > targetTime) {
                             manualSelectedPrayerKey = null; 
@@ -468,13 +459,7 @@
                     }
 
                     if (!targetPrayer) {
-                        const fInfo = parseTimeTo24Hour(dayData['FAJR'], 'FAJR');
-                        const imsakTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), fInfo.hours, fInfo.minutes).getTime() - (15 * 60000);
-
-                        if (now.getTime() < imsakTime && now.getHours() < 12) {
-                            targetPrayer = { name: "الإمساك", time: imsakTime, key: 'IMSAK' };
-                        } else {
-                            for (const key of ['FAJR', 'DHUHR', 'ASR', 'MAGHRIB', 'ISHA']) {
+                        for (const key of ['FAJR', 'SUNRISE', 'DHUHR', 'ASR', 'MAGHRIB', 'ISHA']) {
                                 const { hours, minutes } = parseTimeTo24Hour(dayData[key], key);
                                 const pTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes).getTime();
                                 if (pTime > now.getTime()) { 
@@ -482,7 +467,6 @@
                                     break; 
                                 }
                             }
-                        }
                     }
 
                     if (!manualSelectedPrayerKey) {
@@ -491,7 +475,7 @@
 
                     if (targetPrayer) {
                         const diff = targetPrayer.time - now.getTime();
-                        elements.countdownTitle.innerHTML = `<span>متبقي على ${targetPrayer.key === 'IMSAK' ? '' : 'صلاة '}${targetPrayer.name}</span>`;
+                        elements.countdownTitle.innerHTML = `<span>متبقي على ${(targetPrayer.key === 'SUNRISE') ? '' : 'صلاة '}${targetPrayer.name}</span>`;
                         elements.countdownTimer.innerHTML = formatCountdownText(Math.floor(diff/3600000), Math.floor((diff%3600000)/60000), Math.floor((diff%60000)/1000));
                         
                         const targetCard = document.getElementById(`${targetPrayer.key.toLowerCase()}-card`);
